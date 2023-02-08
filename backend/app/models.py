@@ -28,7 +28,8 @@ class Make(models.Model):
     line = models.ForeignKey(Line, on_delete=models.CASCADE)
     pic = models.ForeignKey(User, on_delete=models.CASCADE)
     targer = models.CharField(max_length=200, blank=True)
-    finish = models.CharField(max_length=200, blank=True)
+    finish = models.CharField(max_length=200, blank=True, default ="0")
+    status = models.CharField(max_length=200, blank=True, default ="RUN")
     shift = models.CharField(max_length=200, choices=SHIFT_CHOIES, default ="MS")
     created_at = models.DateTimeField(auto_now_add=True)
 

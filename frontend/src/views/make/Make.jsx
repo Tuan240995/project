@@ -54,6 +54,13 @@ const columns = [
         // format: value => value.toLocaleString()
     },
     {
+        id: "status",
+        label: "Remark",
+        // minWidth: 170,
+        // align: "right",
+        // format: value => value.toLocaleString()
+    },
+    {
         id: "pic",
         label: "PIC",
         // minWidth: 170,
@@ -103,6 +110,13 @@ const useStyles = makeStyles((theme) => ({
         minWidth: 100,
 
     },
+    stop_text: {
+        color: "#DC143C",
+    },
+    run_text: {
+        color: "#32CD32",
+    },
+
     table__head: {
         backgroundColor: "#bde9ba",
         fontWeight: "bold"
@@ -125,22 +139,6 @@ const BasicTable = () => {
     const [open, setOpen] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     // React.useEffect(() => { getData }, [])
-    const countries = [
-
-        { no: "1", date: "03/12/2022", shift: "MS", targer: "10000", actual: "9500", efficiency: "95 %", pic: "SVN 103", remark: "" },
-        { no: "2", date: "02/12/2022", shift: "AS", targer: "10000", actual: "8500", efficiency: "85 %", pic: "SVN 101", remark: "Thiếu Linh Kiện 0.5h" },
-        { no: "3", date: "02/12/2022", shift: "MS", targer: "10000", actual: "9000", efficiency: "90 %", pic: "SVN 102", remark: "Thiếu Nhân Sự" },
-        { no: "4", date: "01/12/2022", shift: "MS", targer: "10000", actual: "9500", efficiency: "95 %", pic: "SVN 101", remark: "Thiếu Linh Kiện" },
-        { no: "5", date: "03/12/2022", shift: "MS", targer: "10000", actual: "9500", efficiency: "95 %", pic: "SVN 103", remark: "" },
-        { no: "6", date: "02/12/2022", shift: "AS", targer: "10000", actual: "8500", efficiency: "85 %", pic: "SVN 101", remark: "Thiếu Linh Kiện 0.5h" },
-        { no: "7", date: "02/12/2022", shift: "MS", targer: "10000", actual: "9000", efficiency: "90 %", pic: "SVN 102", remark: "Thiếu Nhân Sự" },
-        { no: "8", date: "01/12/2022", shift: "MS", targer: "10000", actual: "9500", efficiency: "95 %", pic: "SVN 101", remark: "Thiếu Linh Kiện" },
-        { no: "9", date: "03/12/2022", shift: "MS", targer: "10000", actual: "9500", efficiency: "95 %", pic: "SVN 103", remark: "" },
-        { no: "10", date: "02/12/2022", shift: "AS", targer: "10000", actual: "8500", efficiency: "85 %", pic: "SVN 101", remark: "Thiếu Linh Kiện 0.5h" },
-        { no: "11", date: "02/12/2022", shift: "MS", targer: "10000", actual: "9000", efficiency: "90 %", pic: "SVN 102", remark: "Thiếu Nhân Sự" },
-        { no: "12", date: "01/12/2022", shift: "MS", targer: "10000", actual: "9500", efficiency: "95 %", pic: "SVN 101", remark: "Thiếu Linh Kiện" },
-    ];
-
 
     useEffect(() => {
         getData();
@@ -177,6 +175,7 @@ const BasicTable = () => {
         targer: [],
         actual: [],
         efficiency: [],
+        status: [],
         pic: [],
         remark: [],
     });
@@ -188,6 +187,7 @@ const BasicTable = () => {
         targer: "",
         actual: "",
         efficiency: "",
+        status: "",
         pic: "",
         remark: "",
     });
@@ -197,7 +197,7 @@ const BasicTable = () => {
         setOpen(!open);
     };
 
-    const headCells = ["Date", "Line", "Product", "Shift", "Q'ty Target", "Q'ty Actual", "Efficiency", "PIC", "Remark"];
+    const headCells = ["Date", "Line", "Product", "Shift", "Q'ty Target", "Q'ty Actual", "Efficiency", "Status", "PIC", "Remark"];
 
     return (
         <React.Fragment>
@@ -296,6 +296,11 @@ const BasicTable = () => {
                                             <TableCell align="center">{row.targer}</TableCell>
                                             <TableCell align="center">{row.finish}</TableCell>
                                             <TableCell align="center">{row.efficiency}</TableCell>
+                                            {row.status==="RUN" ? 
+                                            <TableCell align="center" className={classes.run_text}><strong>{row.status}</strong></TableCell>
+                                            :
+                                            <TableCell align="center" className={classes.stop_text}><strong>{row.status}</strong></TableCell>
+                                            }
                                             <TableCell align="center">{row.pic}</TableCell>
                                             <TableCell align="center">{row.remark}</TableCell>
                                         </TableRow>

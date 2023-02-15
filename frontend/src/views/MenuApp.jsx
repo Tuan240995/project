@@ -184,7 +184,7 @@ export default function MenuApp() {
             </IconButton>
             <Typography className={classes.title} variant="h6" noWrap>
               <Link className={classes.link_head} to="/">
-                SATOMA Viet Nam
+                SATOMAS Viet Nam
               </Link>
             </Typography>
             <div className={classes.grow} />

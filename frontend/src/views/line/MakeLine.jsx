@@ -137,23 +137,91 @@ export default function MakeLine() {
 
     const handleBtnStop = () => {
         setOpen(true);
-        // history.push("/day-chuyen");
     };
+
+    const handleStop = () => {
+        let data = new FormData()
+        data.append('make_id', location.state.makeId)
+        setOpen(false);
+        setOpenUpdate(false);
+        axios({
+            method: "POST",
+            url: "/api/stop_make/",
+            data: data,
+            headers: { "Content-Type": "application/json" },
+        }).then(res => {
+            if (res.data.success === "true") {
+                history.push("/day-chuyen");
+            } else {
+                alert(res.data.message);
+            }
+        }).catch(error => alert("Dừng dây chuyền bị lỗi"));
+    }
 
     const handleBtnUpdate = () => {
         setOpenUpdate(true);
         // history.push("/day-chuyen");
     };
 
+    const handleUpdate = () => {
+        let data = new FormData()
+        data.append('make_id', location.state.makeId)
+        data.append('product', product)
+        data.append('targer', targer)
+        data.append('shift', shift)
+
+        setOpen(false);
+        setOpenUpdate(false);
+        axios({
+            method: "POST",
+            url: "/api/update_make/",
+            data: data,
+            headers: { "Content-Type": "application/json" },
+        }).then(res => {
+            console.log(res.data)
+            if (res.data.success === "true") {
+                history.push("/day-chuyen");
+            } else {
+                alert(res.data.message);
+            }
+
+        }).catch(error => alert("Chỉnh sửa dây chuyền bị lỗi"));
+    }
+
     const handleBtnCancel = () => {
         history.push("/day-chuyen");
     };
     const handleBtnRun = (event) => {
-        history.push("/day-chuyen");
+        if (product === "") {
+            alert("Không tìm thấy sản phẩm")
+        } else if (targer === "") {
+            alert("Không tìm thấy mục tiêu sản xuất")
+        } else if (shift === "") {
+            alert("Không tìm thấy shift")
+        } else if (location.state.line === "") {
+            alert("Không tìm thấy line")
+        } else {
+            let data = new FormData()
+            data.append('product', product)
+            data.append('targer', targer)
+            data.append('shift', shift)
+            data.append('pic', shift)
+            data.append('line', location.state.line)
+
+            axios({
+                method: 'POST',
+                url: '/api/create_make/',
+                data: data,
+                headers: { 'Content-Type': 'multipart/form-data' }
+            }).then(res => {
+                if (res.data.success === "true") {
+                    history.push("/day-chuyen");
+                }
+            }).catch(error => alert("Lỗi không sản xuất"));
+        }
     };
 
-    // console.log(listProduct);
-    // console.log(currentKip);
+
 
     return (
         <React.Fragment>
@@ -227,6 +295,9 @@ export default function MakeLine() {
                                     name="targer"
                                     label="Mục Tiêu"
                                     value={targer}
+                                    onChange={((e) => {
+                                        setTarger(e.target.value);
+                                    })}
                                     fullWidth
                                     autoComplete="shipping address-line2"
                                 />
@@ -333,10 +404,10 @@ export default function MakeLine() {
                                     </DialogContentText>
                                 </DialogContent>
                                 <DialogActions>
-                                    <Button  onClick={handleClose} color="primary" variant="contained">
+                                    <Button onClick={handleClose} color="primary" variant="contained">
                                         No
                                     </Button>
-                                    <Button onClick={handleClose} color="secondary" variant="contained">
+                                    <Button onClick={handleStop} color="secondary" variant="contained">
                                         Yes
                                     </Button>
                                 </DialogActions>
@@ -359,10 +430,10 @@ export default function MakeLine() {
                                     </DialogContentText>
                                 </DialogContent>
                                 <DialogActions>
-                                    <Button  onClick={handleClose} color="primary" variant="contained">
+                                    <Button onClick={handleClose} color="primary" variant="contained">
                                         No
                                     </Button>
-                                    <Button onClick={handleClose} color="secondary" variant="contained">
+                                    <Button onClick={handleUpdate} color="secondary" variant="contained">
                                         Yes
                                     </Button>
                                 </DialogActions>

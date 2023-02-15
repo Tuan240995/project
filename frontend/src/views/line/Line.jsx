@@ -48,6 +48,7 @@ const Line = () => {
               <StyledCard
                 line={option.name}
                 makeId={option.makeId}
+                pic={option.pic}
                 sanPham={option.product}
                 percentage={option.efficiency}
                 targer={option.targer}

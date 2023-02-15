@@ -17,6 +17,7 @@ class LineSerializer(serializers.ModelSerializer):
         data = self._get_make(instance)
         representation['makeId']  = data['makeId']
         representation['product']  = data['product']
+        representation['pic']  = data['pic']
         representation['targer']  = data['targer']
         representation['finish']  = data['finish']
         representation['efficiency']  = data['efficiency']
@@ -30,12 +31,14 @@ class LineSerializer(serializers.ModelSerializer):
             data["product"] = make.product.name
             data["targer"] = make.targer
             data["finish"] = make.finish
+            data["pic"] = make.pic.username 
             data['efficiency'] = (int(make.finish) / int(make.targer)) * 100
         else:
             data["makeId"] = ""
             data["product"] = ""
             data["targer"] = ""
             data["finish"] = ""
+            data["pic"] = ""
             data['efficiency'] = 0
         return data
 

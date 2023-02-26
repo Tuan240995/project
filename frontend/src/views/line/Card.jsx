@@ -114,8 +114,6 @@ const Card = (props) => {
       <Grid container xs justify="flex-start" className={classes.title}>
         <Typography variant="h5">
           Sản Phẩm: <strong className={classes.strong}>{props.sanPham}</strong>
-          <br/>
-          Người quản lý: <strong className={classes.strong}>{props.pic}</strong>
         </Typography>
       </Grid>
     </Paper>

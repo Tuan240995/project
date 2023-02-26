@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Autocomplete } from "@material-ui/lab";
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -222,6 +223,37 @@ export default function MakeLine() {
     };
 
 
+    // test
+    const [input, setInput] = React.useState([]);
+
+    const onTagsChange = (event, values) => {
+        debugger;
+        setInput(values);
+    };
+    const top100Films = [
+        { title: "The Shawshank Redemption", year: 1994 },
+        { title: "The Godfather", year: 1972 },
+        { title: "The Godfather: Part II", year: 1974 },
+        { title: "The Dark Knight", year: 2008 },
+        { title: "12 Angry Men", year: 1957 },
+        { title: "Schindler's List", year: 1993 },
+        { title: "Pulp Fiction", year: 1994 },
+        { title: "The Lord of the Rings: The Return of the King", year: 2003 },
+        { title: "The Good, the Bad and the Ugly", year: 1966 },
+        { title: "Fight Club", year: 1999 },
+        { title: "The Pianist", year: 2002 },
+        { title: "The Departed", year: 2006 },
+        { title: "Terminator 2: Judgment Day", year: 1991 },
+        { title: "Back to the Future", year: 1985 },
+        { title: "Whiplash", year: 2014 },
+        { title: "Gladiator", year: 2000 },
+        { title: "Memento", year: 2000 },
+        { title: "The Prestige", year: 2006 },
+        { title: "The Lion King", year: 1994 }
+    ];
+
+
+
 
     return (
         <React.Fragment>
@@ -323,6 +355,28 @@ export default function MakeLine() {
                                     </Select>
                                 </FormControl>
                             </Grid>
+
+                            <Grid item xs={12}>
+                                <Autocomplete
+                                    multiple
+                                    freeSolo
+                                    options={top100Films}
+                                    getOptionLabel={(option) => option.title || option}
+                                    onChange={onTagsChange}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            variant="standard"
+                                            label="Keywords"
+                                            placeholder="Add keywords"
+                                            margin="normal"
+                                            fullWidth
+                                        />
+                                    )}
+                                />
+
+                            </Grid>
+
                             <Grid item xs={12} sm={12}>
                                 {location.state.makeId != "" ?
                                     <div>
@@ -334,7 +388,7 @@ export default function MakeLine() {
                                                         onClick={handleBtnStop}
                                                         variant="contained"
                                                         color="secondary"
-                                                        className={classes.button} F
+                                                        className={classes.button}
                                                     >
                                                         Stop
                                                     </Button>
@@ -364,7 +418,7 @@ export default function MakeLine() {
                                                         onClick={handleBtnCancel}
                                                         variant="contained"
                                                         color="secondary"
-                                                        className={classes.button} F
+                                                        className={classes.button} 
                                                     >
                                                         Cancel
                                                     </Button>

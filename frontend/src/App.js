@@ -4,18 +4,13 @@ import Login from "./views/Login";
 import SignUp from "./views/SignUp";
 import { Redirect, Route, Switch } from "react-router-dom";
 import MenuApp from "./views/MenuApp";
-import placingOrder from "./views/placingOrder";
-import Notification from "./views/notificationComponent/Notification";
-import SellerHomePage from "./views/SellerPageComponenets/SellerHomePage";
 import authService from "./service/authService";
 import Line from "./views/line/Line";
-import LineForm from "./views/LineForm";
 import Make from "./views/make/Make";
 import MakeLine from "./views/line/MakeLine";
-import Test from "./views/test/Test"
 import AddMake from "./views/make/AddMake";
 import Shows from "./views/show/Shows";
-
+import ListUser from "./views/user/ListUser";
 
 
 export default function App() {
@@ -31,6 +26,8 @@ export default function App() {
               {/* <Route path="/day-chuyen/line-1" component={MakeLine} /> */}
               <Route path="/san-xuat" component={AddMake} />
               <Route path="/van-hanh" component={MakeLine} />
+              <Route path="/nhan-vien" component={ListUser} />
+              <Route path="/quet-qr" component={SignUp} />
               <Route path="/" component={Shows} />
             </Switch>
           </>

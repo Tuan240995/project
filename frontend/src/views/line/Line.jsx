@@ -30,7 +30,7 @@ const Line = () => {
     >
       <Grid style={{ margin: 20 }}>
         <Typography variant="h3">
-          <strong>Tổng Hợp Dây Chuyền</strong>
+          <strong>Tiến Độ Lắp Giáp</strong>
         </Typography>
       </Grid>
       {/* <Grid style={{ margin: 20 }}>

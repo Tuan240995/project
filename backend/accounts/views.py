@@ -1,7 +1,10 @@
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from django.contrib.auth import login, logout, authenticate
 from accounts.serializers import UserSerializer
+from django.contrib.auth.models import User
+
 
 
 class UserLogin(APIView):
@@ -20,3 +23,9 @@ class UserLogout(APIView):
     def get(self, request, *args, **kwargs):
         logout(request)
         return Response({'success':'true'},status=200)
+    
+
+class NhanVien(ModelViewSet):
+    queryset = User.objects.all().order_by('-first_name')
+    serializer_class  = UserSerializer
+    # ordering   =  ['-is_superuser']

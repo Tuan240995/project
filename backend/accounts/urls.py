@@ -1,4 +1,5 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from . import views
 
 
@@ -7,3 +8,7 @@ urlpatterns = [
     path('logout/', views.UserLogout.as_view(), name='logout'),
 
 ]
+
+router = DefaultRouter()
+router.register(r'nhan-vien', views.NhanVien, basename='san-pham')
+urlpatterns += router.urls

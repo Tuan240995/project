@@ -60,6 +60,7 @@ class MakeSerializer(serializers.ModelSerializer):
         representation['targer'] = int(instance.targer)
         representation['finish'] = int(instance.finish)
         representation['created_at'] = instance.created_at.strftime('%d-%m-%Y')
+        representation['time'] = instance.created_at.strftime('%H:%M:%S')
         representation['efficiency'] = round((int(instance.finish) / int(instance.targer)) * 100, 1)
         representation['missing'] = self._get_missing(instance)
         return representation

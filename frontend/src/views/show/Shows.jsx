@@ -115,6 +115,9 @@ const Shows = () => {
     const history = useHistory();
     const location = useLocation();
     const [line, setLine] = React.useState("");
+    const [shours, setHours] = React.useState("0");
+    const [sminutes , setMinutes ] = React.useState("0");
+    const [sseconds, setSeconds] = React.useState("0");
     const [listLine, setListLine] = React.useState([]);
     const [lineValue, setLineValue] = React.useState({
         id: "",
@@ -149,19 +152,10 @@ const Shows = () => {
             headers: { "Content-Type": "application/json" },
         }).then((res) => {
             setLineValue(res.data);
-        });
-    };
-
-    const addMake = (makeId, pc) => {
-        const data = lineValue;
-        data.finish += pc;
-        axios({
-            method: "PUT",
-            url: "/api/make/" + makeId + "/",
-            headers: { "Content-Type": "application/json" },
-            data: data
-        }).then((res) => {
-            setLineValue(res.data);
+            const time = res.data.time.split(":");
+            setHours(time[0]);
+            setMinutes(time[1]);
+            setSeconds(time[2]);
         });
     };
 
@@ -179,38 +173,6 @@ const Shows = () => {
         }
 
 
-    };
-
-    const handleBtnPC = () => {
-        if (lineValue.id === "") {
-            alert("Hãy chọn dây chuyền sản suất");
-        } else {
-            addMake(lineValue.id, 1)
-        }
-    }
-
-    const handleBtnKit = () => {
-        if (lineValue.id === "") {
-            alert("Hãy chọn dây chuyền sản suất");
-        } else {
-            addMake(lineValue.id, 12)
-        }
-    }
-
-    const handleBtnBox = () => {
-        if (lineValue.id === "") {
-            alert("Hãy chọn dây chuyền sản suất");
-        } else {
-            addMake(lineValue.id, 24)
-        }
-    }
-
-
-    const handleCancel = () => {
-        history.push("/day-chuyen");
-    };
-    const handleRun = (event) => {
-        history.push("/day-chuyen");
     };
 
 
@@ -339,7 +301,7 @@ const Shows = () => {
                                                         <Grid container spacing={3}>
                                                             <Grid item xs={12} sm={9}>
                                                                 <Typography className={classes.text_time} component="h5" variant="h5" align="center">
-                                                                    <strong>{hours} </strong>
+                                                                    <strong>{shours} </strong>
                                                                 </Typography>
                                                             </Grid>
                                                             <Grid item xs={12} sm={3}>
@@ -354,7 +316,7 @@ const Shows = () => {
                                                         <Grid container spacing={3}>
                                                             <Grid item xs={12} sm={9}>
                                                                 <Typography className={classes.text_time} component="h5" variant="h5" align="center">
-                                                                    <strong>{minutes} </strong>
+                                                                    <strong>{sminutes} </strong>
                                                                 </Typography>
                                                             </Grid>
                                                             <Grid item xs={12} sm={3}>
@@ -370,7 +332,7 @@ const Shows = () => {
                                                         <Grid container spacing={3}>
                                                             <Grid item xs={12} sm={9}>
                                                                 <Typography className={classes.text_time} component="h5" variant="h5" align="center">
-                                                                    <strong>{seconds} </strong>
+                                                                    <strong>{sseconds} </strong>
                                                                 </Typography>
                                                             </Grid>
                                                             <Grid item xs={12} sm={3}>

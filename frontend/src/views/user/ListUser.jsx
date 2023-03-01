@@ -18,6 +18,12 @@ import SearchIcon from "@material-ui/icons/Search";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import AddIcon from "@material-ui/icons/Add";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
 import axios from 'axios';
 
 
@@ -136,6 +142,9 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const ListUser = () => {
     const classes = useStyles();
@@ -146,6 +155,28 @@ const ListUser = () => {
     const [openCheck, setOpenCheck] = React.useState(false);
     const [openCheckPW, setOpenCheckPW] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [openUpdate, setOpenUpdate] = React.useState(false);
+
+    const [searchUserName, setSearchUserName] = React.useState("");
+    const [searchUserId, setSearchUserId] = React.useState("");
+    const [searchPosition, setSearchPosition] = React.useState("");
+
+    const [updateUserID, setUserID] = React.useState("");
+    const [updateName, setUpdateName] = React.useState("");
+    const [updateCode, setUpdateCode] = React.useState("");
+    const [updatePosition, setUpdatePosition] = React.useState("");
+    const [updatePassword, setUpdatePassword] = React.useState("");
+    const [updateRePassword, setUpdateRePassword] = React.useState("");
+
+
+    const [createName, setCreateName] = React.useState("");
+    const [createCode, setCreateCode] = React.useState("");
+    const [createPosition, setCreatePosition] = React.useState("");
+    const [createPassword, setCreatePassword] = React.useState("");
+
+    const [idUserDelete, setIdUserDelete] = React.useState("");
+
+
     // React.useEffect(() => { getData }, [])
 
     useEffect(() => {
@@ -192,6 +223,23 @@ const ListUser = () => {
         setOpenSearch(!openSearch);
     };
 
+    const hanldeBTNSearch = () => {
+        axios({
+            method: "GET",
+            url: "/account/nhan-vien/",
+            params: {
+                last_name: searchUserName,
+                username: searchUserId,
+                first_name: searchPosition,
+            },
+            headers: { "Content-Type": "application/json" },
+        }).then((res) => {
+            console.log(res.data);
+            setRows(res.data);
+            console.log(rows);
+        });
+    }
+
     const hanldeBTNAdd = () => {
         setOpenCheckPW(false);
         setOpenCheck(true);
@@ -199,25 +247,121 @@ const ListUser = () => {
 
     };
 
-    const hanldeBTNEdit = () => {
+
+    const hanldeBTNEdit = (user_id) => {
         setOpenCheckPW(false);
         setOpenCheck(false);
         setOpenInfor(true);
+        // getDataEdit(user_id);
+        const users = rows.filter((item) => item.id === user_id);
+        console.log(users)
+        setUserID(users[0].id);
+        setUpdateName(users[0].last_name);
+        setUpdateCode(users[0].username);
+        setUpdatePosition(users[0].first_name);
     };
-    const hanldeBTNDelete = () => {
+
+    const hanldeBTNDelete = (user_id) => {
+        setOpenUpdate(true);
+        setIdUserDelete(user_id);
 
     };
+
     const hanldeBTNCancel = () => {
         setOpenCheckPW(false);
         setOpenInfor(false);
 
     };
 
+    const hanldeBTNCreate = () => {
+        setOpenCheckPW(false);
+        setOpenInfor(false);
+
+        let data = new FormData()
+        data.append('name', createName)
+        data.append('code', createCode)
+        data.append('position', createPosition)
+        data.append('password', createPassword)
+
+        axios({
+            method: "POST",
+            url: "/account/nhan-vien/",
+            data: data,
+            headers: { "Content-Type": "application/json" },
+        }).then(res => {
+            if (res.data.success === "true") {
+                getData();
+            } else {
+                alert(res.data.message);
+            }
+        }).catch(error => alert("Tạo tài khoan bị lỗi"));
+
+    };
+
+
+    const updateUser = (data) => {
+        axios({
+            method: "PUT",
+            url: "/account/nhan-vien/" + updateUserID + "/",
+            headers: { "Content-Type": "application/json" },
+            data: data
+        }).then((res) => {
+            alert("Cập Nhập Thành Công")
+            setOpenCheckPW(false);
+            setOpenInfor(false);
+            getData()
+        }).catch(error => alert(error));
+    }
+
+    const hanldeBTNUpdate = () => {
+
+
+        if (updateName == "" || updateCode == "" || updatePosition == "") {
+            alert(" Hãy Nhập Đủ Thông Tin");
+        } else {
+            let data = new FormData()
+            data.append('last_name', updateName)
+            data.append('username', updateCode)
+            data.append('first_name', updatePosition)
+
+
+            if (openCheckPW) {
+                if (updatePassword != "" && updatePassword === updateRePassword) {
+                    data.append('password', updatePassword);
+                    updateUser(data);
+                    setOpenInfor(false);
+                } else {
+                    alert(" Nhập Lại Mật Khẩu...");
+                }
+            } else {
+                updateUser(data);
+            }
+
+        }
+
+    }
+
     const hanldeBTNCheckPW = () => {
         setOpenCheckPW(true);
     };
 
-    const headCells = ["Tên", "Mã Nhân Viên", "Chức Vụ", ""];
+
+    const handleCloseCheck = () => {
+        setOpenUpdate(false);
+    };
+
+    const handleDeleteCheck = () => {
+        setOpenUpdate(false);
+        axios({
+            method: "DELETE",
+            url: "/account/nhan-vien/" + idUserDelete + "/",
+            headers: { "Content-Type": "application/json" },
+        }).then((res) => {
+            setRows(rows.filter((item) => item.id !== idUserDelete));
+        });
+    };
+
+    const headCells = ["STT", "Tên", "Mã Nhân Viên", "Chức Vụ", ""];
 
     const list_data = (
         <div>
@@ -236,22 +380,22 @@ const ListUser = () => {
                     <TableBody>
                         {rows
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row) => (
-                                <TableRow key={row.id} >
-
+                            .map((row, index) => (
+                                <TableRow key={index} >
+                                    <TableCell align="center" >{index}</TableCell>
                                     <TableCell align="center" >{row.last_name}</TableCell>
                                     <TableCell align="center">{row.username}</TableCell>
                                     <TableCell align="center">{row.first_name}</TableCell>
                                     <TableCell align="center">
                                         <IconButton
                                             color="primary"
-                                            onClick={hanldeBTNEdit}
+                                            onClick={() => hanldeBTNEdit(row.id)}
                                         >
                                             <EditIcon />
                                         </IconButton>
                                         <IconButton
                                             color="secondary"
-                                            onClick={hanldeBTNDelete}
+                                            onClick={() => hanldeBTNDelete(row.id)}
                                         >
                                             <DeleteIcon />
                                         </IconButton>
@@ -290,43 +434,48 @@ const ListUser = () => {
                                 id="name"
                                 label="Họ và Tên"
                                 name="name"
-
+                                onChange={((e) => {
+                                    setCreateName(e.target.value);
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={12}>
                             <TextField
-
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="ma-vn"
+                                id="code"
                                 label="Mã Nhân Viên"
-                                name="ma"
-
+                                name="code"
+                                onChange={((e) => {
+                                    setCreateCode(e.target.value);
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={12}>
                             <TextField
-
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="ma-vn"
+                                id="position"
                                 label="Chức Vụ"
-                                name="ma"
-
+                                name="position"
+                                onChange={((e) => {
+                                    setCreatePosition(e.target.value);
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={12}>
                             <TextField
-
                                 variant="outlined"
                                 required
                                 fullWidth
                                 id="password"
                                 label="Password"
                                 name="password"
-
+                                onChange={((e) => {
+                                    setCreatePassword(e.target.value);
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={12}>
@@ -349,7 +498,7 @@ const ListUser = () => {
                     <Grid item xs={12} sm={6}>
                         <div className={classes.buttons}>
                             <Button
-                                onClick={hanldeBTNCancel}
+                                onClick={hanldeBTNCreate}
                                 variant="contained"
                                 color="primary"
                             >
@@ -378,7 +527,10 @@ const ListUser = () => {
                                 id="name"
                                 label="Họ và Tên"
                                 name="name"
-
+                                defaultValue={updateName}
+                                onChange={((e) => {
+                                    setUpdateName(e.target.value);
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={12}>
@@ -387,10 +539,13 @@ const ListUser = () => {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="ma-vn"
+                                id="code"
                                 label="Mã Nhân Viên"
-                                name="ma"
-
+                                name="code"
+                                defaultValue={updateCode}
+                                onChange={((e) => {
+                                    setUpdateCode(e.target.value);
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={12}>
@@ -399,10 +554,13 @@ const ListUser = () => {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="ma-vn"
+                                id="position"
                                 label="Chức Vụ"
-                                name="ma"
-
+                                name="position"
+                                defaultValue={updatePosition}
+                                onChange={((e) => {
+                                    setUpdatePosition(e.target.value);
+                                })}
                             />
                         </Grid>
                         {
@@ -417,26 +575,28 @@ const ListUser = () => {
                                     </Grid>
                                     <Grid item xs={12} sm={12}>
                                         <TextField
-
                                             variant="outlined"
                                             required
                                             fullWidth
                                             id="password"
                                             label="Password"
                                             name="password"
-
+                                            onChange={((e) => {
+                                                setUpdatePassword(e.target.value);
+                                            })}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12}>
                                         <TextField
-
                                             variant="outlined"
                                             required
                                             fullWidth
-                                            id="password"
-                                            label="Password"
+                                            id="re-password"
+                                            label="Re-Password"
                                             name="password"
-
+                                            onChange={((e) => {
+                                                setUpdateRePassword(e.target.value);
+                                            })}
                                         />
                                     </Grid>
                                 </Grid>
@@ -474,7 +634,7 @@ const ListUser = () => {
                     <Grid item xs={12} sm={6}>
                         <div className={classes.buttons}>
                             <Button
-                                onClick={hanldeBTNCancel}
+                                onClick={hanldeBTNUpdate}
                                 variant="contained"
                                 color="primary"
                             >
@@ -518,10 +678,12 @@ const ListUser = () => {
                                         <b>Tên</b>
                                     </Typography>
                                     <TextField
-                                        required
-                                        id="line"
-                                        name="dateFrom"
-                                        autoComplete="dateFrom"
+                                        id="searchUserName"
+                                        name="searchUserName"
+                                        onChange={((e) => {
+                                            setSearchUserName(e.target.value);
+                                        })}
+                                        autoComplete="searchUserName"
                                     />
                                 </Grid>
                                 <Grid item xs={6} sm={3}>
@@ -529,10 +691,12 @@ const ListUser = () => {
                                         <b>Mã Nhân Viên</b>
                                     </Typography>
                                     <TextField
-                                        required
-                                        id="line"
-                                        name="dateFrom"
-                                        autoComplete="dateFrom"
+                                        id="searchUserId"
+                                        name="searchUserId"
+                                        onChange={((e) => {
+                                            setSearchUserId(e.target.value);
+                                        })}
+                                        autoComplete="searchUserId"
                                     />
                                 </Grid>
                                 <Grid item xs={6} sm={2}>
@@ -540,15 +704,23 @@ const ListUser = () => {
                                         <b>Chức Vụ</b>
                                     </Typography>
                                     <TextField
-                                        required
-                                        id="line"
-                                        name="dateFrom"
-                                        autoComplete="dateFrom"
+                                        id="searchPosition"
+                                        name="searchPosition"
+                                        onChange={((e) => {
+                                            setSearchPosition(e.target.value);
+                                        })}
+                                        autoComplete="searchPosition"
                                     />
                                 </Grid>
                                 <Grid item xs={6} sm={2}>
                                     <Typography align="center">
-                                        <Button variant="contained" color="primary"> Tìm Kiếm </Button>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={hanldeBTNSearch}
+                                        >
+                                            Tìm Kiếm
+                                        </Button>
                                     </Typography>
 
                                 </Grid>
@@ -577,6 +749,33 @@ const ListUser = () => {
 
                     </Grid>
                 </Paper>
+
+                <div>
+                    <Dialog
+                        open={openUpdate}
+                        TransitionComponent={Transition}
+                        keepMounted
+                        onClose={handleCloseCheck}
+                        aria-labelledby="alert-dialog-slide-title"
+                        aria-describedby="alert-dialog-slide-description"
+                    >
+                        <DialogTitle id="alert-dialog-slide-title">{"Xóa Tài Khoản"}</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-slide-description">
+                                Bạn muốn xóa tài khoản này không ?
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseCheck} color="primary" variant="contained">
+                                No
+                            </Button>
+                            <Button onClick={handleDeleteCheck} color="secondary" variant="contained">
+                                Yes
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                </div>
+
             </main>
         </React.Fragment>
     );

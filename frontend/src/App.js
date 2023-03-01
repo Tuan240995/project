@@ -27,7 +27,7 @@ export default function App() {
               <Route path="/san-xuat" component={AddMake} />
               <Route path="/van-hanh" component={MakeLine} />
               <Route path="/nhan-vien" component={ListUser} />
-              <Route path="/quet-qr" component={SignUp} />
+              <Route path="/quet-qr" component={Shows} />
               <Route path="/" component={Shows} />
             </Switch>
           </>

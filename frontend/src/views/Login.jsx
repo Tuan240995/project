@@ -97,7 +97,7 @@ export default function SignInSide(props) {
       headers: { 'Content-Type': 'multipart/form-data' }
     }).then(res => {
       if (res.data.success === "true") {
-        authService.doLogIn(account.username);
+        authService.doLogIn(res.data.data);
         window.location.reload();
       }
     }).catch(error => alert("Your username or password is incorrect!"));

@@ -4,13 +4,10 @@ import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import MailIcon from "@material-ui/icons/Mail";
-import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import authService from "../service/authService";
 import { Link } from 'react-router-dom'
@@ -21,7 +18,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import { black , white} from "material-ui/styles/colors";
+import { black, white } from "material-ui/styles/colors";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -167,6 +164,7 @@ export default function MenuApp() {
   );
 
   const mobileMenuId = "primary-search-account-menu-mobile";
+  console.log(authService.userAccess().admin)
 
   return (
     <>
@@ -248,12 +246,15 @@ export default function MenuApp() {
                     <ListItemText primary="Quet Qr" />
                   </ListItem>
                 </Link>
-                <Link className={classes.link} to="/nhan-vien">
-                  <ListItem button>
-                    <ListItemIcon>{<InboxIcon />}</ListItemIcon>
-                    <ListItemText primary="Nhân Viên" />
-                  </ListItem>
-                </Link>
+                {authService.userAccess().admin === "true" &&
+                  <Link className={classes.link} to="/nhan-vien">
+                    <ListItem button>
+                      <ListItemIcon>{<InboxIcon />}</ListItemIcon>
+                      <ListItemText primary="Nhân Viên" />
+                    </ListItem>
+                  </Link>
+
+                }
               </List>
               <Divider />
             </div>

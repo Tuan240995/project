@@ -101,7 +101,7 @@ const Card = (props) => {
         />
       </Grid>
       <Typography className={classes.text} variant="h3" align="center">
-        {props.finish != "" ?
+        {props.finish !== "" ?
           <b>{props.finish} / {props.targer}</b>
           :
           <> <b>.</b></>

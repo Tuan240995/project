@@ -9,7 +9,7 @@ class LineAdmin(admin.ModelAdmin):
     fields = ('name', 'status')
 
 class MakeAdmin(admin.ModelAdmin):
-    fields = ('product', 'line', 'targer', 'pic', 'finish', 'shift', 'status')
+    fields = ('product', 'line', 'targer', 'pic', 'finish', 'shift', 'staff', 'status')
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Line, LineAdmin)

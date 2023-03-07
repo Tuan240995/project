@@ -78,29 +78,48 @@ export default function MakeLine() {
     const [open, setOpen] = React.useState(false);
     const [openUpdate, setOpenUpdate] = React.useState(false);
     const [listProduct, setListProduct] = React.useState([]);
+    const [listStaff, setListStaff] = React.useState([]);
     const [product, setProduct] = React.useState("");
     const [targer, setTarger] = React.useState("");
     const [shift, setShift] = React.useState("");
+    const [staff, setStaff] = React.useState("");
+    const [worker, setWorker] = React.useState([]);
+    const makeId = location.state.makeId
 
     useEffect(() => {
         getProduct();
-        if (location.state.makeId != "") {
+        getUser();
+        if (makeId !== "") {
             getMake();
         }
-
     }, []);
 
     const getMake = () => {
         axios({
             method: "GET",
-            url: "/api/make/" + location.state.makeId,
+            url: "/api/make/" + location.state.makeId + "/",
             headers: { "Content-Type": "application/json" },
         }).then((res) => {
             setProduct(res.data.product)
             setTarger(res.data.targer)
             setShift(res.data.shift)
+            setWorker(res.data.staff)
         });
     };
+
+    const getUser = () => {
+        axios({
+            method: "GET",
+            url: "/account/nhan-vien/",
+            params: {
+                first_name: "Leve 1",
+            },
+            headers: { "Content-Type": "application/json" },
+        }).then((res) => {
+            console.log(res.data);
+            setListStaff(res.data)
+        });
+    }
 
     const getProduct = () => {
         axios({
@@ -127,9 +146,9 @@ export default function MakeLine() {
         },
     ];
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
+    // const handleClickOpen = () => {
+    //     setOpen(true);
+    // };
 
     const handleClose = () => {
         setOpen(false);
@@ -170,6 +189,7 @@ export default function MakeLine() {
         data.append('product', product)
         data.append('targer', targer)
         data.append('shift', shift)
+        data.append('staff', hanld_user())
 
         setOpen(false);
         setOpenUpdate(false);
@@ -192,6 +212,7 @@ export default function MakeLine() {
     const handleBtnCancel = () => {
         history.push("/day-chuyen");
     };
+
     const handleBtnRun = (event) => {
         if (product === "") {
             alert("Không tìm thấy sản phẩm")
@@ -199,15 +220,19 @@ export default function MakeLine() {
             alert("Không tìm thấy mục tiêu sản xuất")
         } else if (shift === "") {
             alert("Không tìm thấy shift")
+        } else if (worker === []) {
+            alert("Không tìm thấy nhân viên")
         } else if (location.state.line === "") {
             alert("Không tìm thấy line")
         } else {
+
             let data = new FormData()
             data.append('product', product)
             data.append('targer', targer)
             data.append('shift', shift)
             data.append('pic', shift)
             data.append('line', location.state.line)
+            data.append('staff', hanld_user())
 
             axios({
                 method: 'POST',
@@ -221,39 +246,22 @@ export default function MakeLine() {
             }).catch(error => alert("Lỗi không sản xuất"));
         }
     };
-
-
-    // test
-    const [input, setInput] = React.useState([]);
-
-    const onTagsChange = (event, values) => {
-        debugger;
-        setInput(values);
+    const hanld_user = () => {
+        var user = "";
+        worker.map((number) => {
+            if (user === "") {
+                user = number.username;
+            } else {
+                user = user + ", " + number.username;
+            }
+        });
+        return user
     };
-    const top100Films = [
-        { title: "The Shawshank Redemption", year: 1994 },
-        { title: "The Godfather", year: 1972 },
-        { title: "The Godfather: Part II", year: 1974 },
-        { title: "The Dark Knight", year: 2008 },
-        { title: "12 Angry Men", year: 1957 },
-        { title: "Schindler's List", year: 1993 },
-        { title: "Pulp Fiction", year: 1994 },
-        { title: "The Lord of the Rings: The Return of the King", year: 2003 },
-        { title: "The Good, the Bad and the Ugly", year: 1966 },
-        { title: "Fight Club", year: 1999 },
-        { title: "The Pianist", year: 2002 },
-        { title: "The Departed", year: 2006 },
-        { title: "Terminator 2: Judgment Day", year: 1991 },
-        { title: "Back to the Future", year: 1985 },
-        { title: "Whiplash", year: 2014 },
-        { title: "Gladiator", year: 2000 },
-        { title: "Memento", year: 2000 },
-        { title: "The Prestige", year: 2006 },
-        { title: "The Lion King", year: 1994 }
-    ];
+    const onTagsChange = (event, values) => {
+        // debugger;
+        setWorker(values);
 
-
-
+    };
 
     return (
         <React.Fragment>
@@ -360,8 +368,12 @@ export default function MakeLine() {
                                 <Autocomplete
                                     multiple
                                     freeSolo
-                                    options={top100Films}
-                                    getOptionLabel={(option) => option.title || option}
+                                    options={listStaff}
+                                    value={worker}
+                                    getOptionLabel={(option) => option.last_name + " ( " + option.username + " )" || option}
+                                    // onChange={((e) => {
+                                    //     setWorker(e.target.value);
+                                    // })}
                                     onChange={onTagsChange}
                                     renderInput={(params) => (
                                         <TextField
@@ -378,7 +390,7 @@ export default function MakeLine() {
                             </Grid>
 
                             <Grid item xs={12} sm={12}>
-                                {location.state.makeId != "" ?
+                                {location.state.makeId !== "" ?
                                     <div>
                                         <Grid container spacing={3}>
 
@@ -418,7 +430,7 @@ export default function MakeLine() {
                                                         onClick={handleBtnCancel}
                                                         variant="contained"
                                                         color="secondary"
-                                                        className={classes.button} 
+                                                        className={classes.button}
                                                     >
                                                         Cancel
                                                     </Button>

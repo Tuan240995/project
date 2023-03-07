@@ -13,69 +13,72 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import SearchIcon from "@material-ui/icons/Search";
+import FormControl from '@material-ui/core/FormControl';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import axios from 'axios';
 
 
-const columns = [
-    {
-        id: "no",
-        label: "No."
-    },
-    {
-        id: "date",
-        label: "Date"
-    },
-    {
-        id: "shift",
-        label: "Shift",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toLocaleString()
-    },
-    {
-        id: "targer",
-        label: "Q'ty Target",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toLocaleString()
-    },
-    {
-        id: "actual",
-        label: "Q'ty Actual",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toFixed(2)
-    },
-    {
-        id: "efficiency",
-        label: "Efficiency",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toLocaleString()
-    },
-    {
-        id: "status",
-        label: "Remark",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toLocaleString()
-    },
-    {
-        id: "pic",
-        label: "PIC",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toLocaleString()
-    },
-    {
-        id: "remark",
-        label: "Remark",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toLocaleString()
-    },
+// const columns = [
+//     {
+//         id: "no",
+//         label: "No."
+//     },
+//     {
+//         id: "date",
+//         label: "Date"
+//     },
+//     {
+//         id: "shift",
+//         label: "Shift",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toLocaleString()
+//     },
+//     {
+//         id: "targer",
+//         label: "Q'ty Target",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toLocaleString()
+//     },
+//     {
+//         id: "actual",
+//         label: "Q'ty Actual",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toFixed(2)
+//     },
+//     {
+//         id: "efficiency",
+//         label: "Efficiency",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toLocaleString()
+//     },
+//     {
+//         id: "status",
+//         label: "Remark",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toLocaleString()
+//     },
+//     {
+//         id: "pic",
+//         label: "PIC",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toLocaleString()
+//     },
+//     {
+//         id: "remark",
+//         label: "Remark",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toLocaleString()
+//     },
 
-];
+// ];
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -116,7 +119,13 @@ const useStyles = makeStyles((theme) => ({
     run_text: {
         color: "#32CD32",
     },
+    formControl: {
+        // margin: theme.spacing(1),
 
+        minWidth: "50%",
+        // border: "2px solid #ff0000"
+
+    },
     table__head: {
         backgroundColor: "#bde9ba",
         fontWeight: "bold"
@@ -140,6 +149,11 @@ const BasicTable = () => {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     // React.useEffect(() => { getData }, [])
 
+    const [startDay, setStartDay] = React.useState("");
+    const [toDay, setToday] = React.useState("");
+    const [shift, setShift] = React.useState("");
+    const [pic, setPic] = React.useState("");
+
     useEffect(() => {
         getData();
     }, []);
@@ -151,9 +165,7 @@ const BasicTable = () => {
             url: "/api/make/",
             headers: { "Content-Type": "application/json" },
         }).then((res) => {
-            console.log(res.data);
             setRows(res.data);
-            console.log(rows);
         });
     };
 
@@ -168,36 +180,53 @@ const BasicTable = () => {
         setPage(0);
     };
 
-    const [checkedItems, setCheckedItems] = React.useState({
-        no: [],
-        date: [],
-        shift: [],
-        targer: [],
-        actual: [],
-        efficiency: [],
-        status: [],
-        pic: [],
-        remark: [],
-    });
-
-    const [keywords, setKeywords] = React.useState({
-        no: "",
-        date: "",
-        shift: "",
-        targer: "",
-        actual: "",
-        efficiency: "",
-        status: "",
-        pic: "",
-        remark: "",
-    });
-
     const hanldeSearch = () => {
         console.log(open);
         setOpen(!open);
     };
 
-    const headCells = ["Date", "Line", "Product", "Shift", "Q'ty Target", "Q'ty Actual", "Efficiency", "Status", "PIC", "Remark"];
+    const hanldeBTNSearch = () => {
+        console.log(startDay);
+        console.log(toDay);
+        console.log(shift);
+        console.log(pic);
+        axios({
+            method: "GET",
+            url: "/api/make/",
+            params: {
+                start_day: startDay,
+                to_day: toDay,
+                shift: shift,
+                pic: pic,
+            },
+            headers: { "Content-Type": "application/json" },
+        }).then((res) => {
+            setRows(res.data);
+        });
+
+    };
+
+
+    const currentKip = [
+        {
+            kip: "MS",
+            value: "MS"
+        },
+        {
+            kip: "AS",
+            value: "AS"
+        },
+        {
+            kip: "NS",
+            value: "NS"
+        },
+        {
+            kip: "ALL",
+            value: "ALL"
+        },
+    ];
+
+    const headCells = ["Ngày", "Dây Chuyền", "Sản Phẩm", "Ca", "Mục Tiêu", "Hoàn Thành", "Tỉ Lê", "Trạng Thái", "Công Nhân", "Quản Lý", "Note"];
 
     return (
         <React.Fragment>
@@ -225,6 +254,9 @@ const BasicTable = () => {
                                         id="line"
                                         type="date"
                                         name="dateFrom"
+                                        onChange={((e) => {
+                                            setStartDay(e.target.value);
+                                        })}
                                         autoComplete="dateFrom"
                                     />
                                 </Grid>
@@ -238,18 +270,37 @@ const BasicTable = () => {
                                         type="date"
                                         name="dateFrom"
                                         autoComplete="dateFrom"
+                                        onChange={((e) => {
+                                            setToday(e.target.value);
+                                        })}
                                     />
                                 </Grid>
                                 <Grid item xs={6} sm={3}>
                                     <Typography>
                                         <b>Shift</b>
                                     </Typography>
-                                    <TextField
-                                        required
-                                        id="line"
-                                        name="dateFrom"
-                                        autoComplete="dateFrom"
-                                    />
+
+                                    <FormControl className={classes.formControl}>
+                                        {/* <InputLabel id="demo-simple-select-label">Chức Vụ</InputLabel> */}
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            required
+                                            fullWidth
+                                            onChange={((e) => {
+                                                setShift(e.target.value);
+                                            })}
+                                        >
+                                            <MenuItem key="None" value="">
+                                                <em>None</em>
+                                            </MenuItem>
+                                            {currentKip.map((option) => (
+                                                <MenuItem key={option.kip} value={option.value}>
+                                                    {option.kip}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
                                 <Grid item xs={6} sm={2}>
                                     <Typography>
@@ -260,11 +311,20 @@ const BasicTable = () => {
                                         id="line"
                                         name="dateFrom"
                                         autoComplete="dateFrom"
+                                        onChange={((e) => {
+                                            setPic(e.target.value);
+                                        })}
                                     />
                                 </Grid>
                                 <Grid item xs={6} sm={2}>
                                     <Typography align="center">
-                                        <Button variant="contained" color="primary"> Tìm Kiếm </Button>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={hanldeBTNSearch}
+                                        >
+                                            Tìm Kiếm
+                                        </Button>
                                     </Typography>
 
                                 </Grid>
@@ -288,19 +348,20 @@ const BasicTable = () => {
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row) => (
                                         <TableRow key={row.id} >
-                                            
+
                                             <TableCell align="center" >{row.created_at}</TableCell>
                                             <TableCell align="center">{row.line}</TableCell>
                                             <TableCell align="center">{row.product}</TableCell>
                                             <TableCell align="center">{row.shift}</TableCell>
                                             <TableCell align="center">{row.targer}</TableCell>
                                             <TableCell align="center">{row.finish}</TableCell>
-                                            <TableCell align="center">{row.efficiency}</TableCell>
-                                            {row.status==="RUN" ? 
-                                            <TableCell align="center" className={classes.run_text}><strong>{row.status}</strong></TableCell>
-                                            :
-                                            <TableCell align="center" className={classes.stop_text}><strong>{row.status}</strong></TableCell>
+                                            <TableCell align="center">{row.efficiency}%</TableCell>
+                                            {row.status === "RUN" ?
+                                                <TableCell align="center" className={classes.run_text}><strong>{row.status}</strong></TableCell>
+                                                :
+                                                <TableCell align="center" className={classes.stop_text}><strong>{row.status}</strong></TableCell>
                                             }
+                                            <TableCell align="center">{row.total_staff}</TableCell>
                                             <TableCell align="center">{row.pic}</TableCell>
                                             <TableCell align="center">{row.remark}</TableCell>
                                         </TableRow>

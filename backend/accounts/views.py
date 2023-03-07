@@ -43,7 +43,7 @@ class NhanVien(ModelViewSet):
                 User.objects.create_user(
                     username = code, 
                     last_name = name, 
-                    first_name = position,
+                    first_name = self.check_position(position),
                     password= password)
                 return Response({'success':'true'},status=200)
             except:
@@ -52,15 +52,27 @@ class NhanVien(ModelViewSet):
     
     def update(self, request, *args, **kwargs):
         password = request.data.get("password", None)
+        position = request.data.get("first_name", None)
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         if password:
-            print("=======password=========")
             instance.set_password(password)
             instance.save()
+        if position:
+            request.data['first_name'] = self.check_position(position)
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
 
+
+    def check_position(self, position):
+        if "Nhân Viên" == position:
+            return "Leve 1"
+        elif "Leader" == position:
+            return "Leve 2"
+        elif "Manager" == position:
+            return "Leve 3"
+        elif "Admin" == position:
+            return "Leve 4"
     

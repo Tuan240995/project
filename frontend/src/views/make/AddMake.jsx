@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(2),
         marginRight: theme.spacing(2),
         [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-            width: "80%",
+            width: "100%",
             marginLeft: 'auto',
             marginRight: 'auto',
         },
@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
         fontSize: '15px',
     },
     button: {
-        width: '150px',
+        width: '250px',
         height: '75px',
 
         // marginTop: theme.spacing(3),
@@ -65,9 +65,6 @@ const useStyles = makeStyles((theme) => ({
         borderStyle: "groove",
     },
 }));
-
-const steps = ['Shipping address', 'Payment details', 'Review your order'];
-
 
 
 const AddMake = () => {
@@ -248,23 +245,22 @@ const AddMake = () => {
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <Typography className={classes.text} component="h5" variant="h5" align="center">
-                                            Tỷ lệ hoàn thành
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12} sm={4}>
-                                        <Typography className={classes.text_value} component="h5" variant="h4" align="center">
-                                            <strong>{lineValue.efficiency} %</strong>
-                                        </Typography>
-                                    </Grid>
-
-                                    <Grid item xs={12} sm={6}>
-                                        <Typography className={classes.text} component="h5" variant="h5" align="center">
                                             Số lượng hiện tại
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <Typography className={classes.text_value} component="h5" variant="h4" align="center">
                                             <strong>{lineValue.finish}</strong>
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} sm={6}>
+                                        <Typography className={classes.text} component="h5" variant="h5" align="center">
+                                            Tỷ lệ hoàn thành
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} sm={4}>
+                                        <Typography className={classes.text_value} component="h5" variant="h4" align="center">
+                                            <strong>{lineValue.efficiency} %</strong>
                                         </Typography>
                                     </Grid>
 

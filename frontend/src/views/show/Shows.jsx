@@ -104,7 +104,7 @@ const useStyles = makeStyles((theme) => ({
     img: {
         margin: theme.spacing("35px", 0, 0, 0),
         // padding: theme.spacing(0, 0, 0, 0),
-        
+
     },
 
 }));
@@ -115,8 +115,10 @@ const Shows = () => {
     const history = useHistory();
     const location = useLocation();
     const [line, setLine] = React.useState("");
+    const [makeID, setMakeID] = React.useState("");
+    const [isCheck, setIsCheck] = React.useState(false);
     const [shours, setHours] = React.useState("0");
-    const [sminutes , setMinutes ] = React.useState("0");
+    const [sminutes, setMinutes] = React.useState("0");
     const [sseconds, setSeconds] = React.useState("0");
     const [listLine, setListLine] = React.useState([]);
     const [lineValue, setLineValue] = React.useState({
@@ -134,6 +136,16 @@ const Shows = () => {
         getLine();
     }, []);
 
+    useEffect(() => {
+        if (isCheck) {
+            getMake();
+            const interval = setInterval(() => {
+                getMake();
+            }, 5000);
+            return () => clearInterval(interval);
+        };
+    }, [makeID]);
+
     const getLine = () => {
         axios({
             method: "GET",
@@ -145,10 +157,10 @@ const Shows = () => {
         });
     };
 
-    const getMake = (makeId) => {
+    const getMake = () => {
         axios({
             method: "GET",
-            url: "/api/make/" + makeId,
+            url: "/api/make/" + makeID + "/",
             headers: { "Content-Type": "application/json" },
         }).then((res) => {
             setLineValue(res.data);
@@ -159,21 +171,18 @@ const Shows = () => {
         });
     };
 
-
-    const { seconds, minutes, hours, ampm } = useTime({ format: "24-hour" });
-
-
     const handleChangeLine = (event) => {
         if (listLine === []) {
             alert("Không có dây chuyền nào đang vận hành");
         }
         else {
             setLine(event.target.value);
-            getMake(event.target.value);
+            setIsCheck(true);
+            setMakeID(event.target.value);
         }
-
-
     };
+
+    const { seconds, minutes, hours, ampm } = useTime({ format: "24-hour" });
 
 
     return (
@@ -292,7 +301,7 @@ const Shows = () => {
                                             </Grid>
                                             <div className={classes.time}>
                                                 <Divider />
-                                                <br/>
+                                                <br />
                                                 <Grid container spacing={3} >
                                                     {/* Bat dau */}
                                                     <Grid item xs={12} sm={1}></Grid>

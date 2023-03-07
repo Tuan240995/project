@@ -158,7 +158,7 @@ export default function MenuApp() {
       onClose={handleMenuClose}
     >
       {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>{authService.userAccess().username}</MenuItem>
       <MenuItem onClick={() => authService.logOut()}>Log Out</MenuItem>
     </Menu>
   );
@@ -246,17 +246,25 @@ export default function MenuApp() {
                     <ListItemText primary="Quet Qr" />
                   </ListItem>
                 </Link>
-                {authService.userAccess().admin === "true" &&
+              </List>
+              <Divider />
+              {authService.userAccess().admin === "true" &&
+                <List>
+                  <Link className={classes.link} to="/quet-qr">
+                    <ListItem button>
+                      <ListItemIcon>{<InboxIcon />}</ListItemIcon>
+                      <ListItemText primary="Quản Lý" />
+                    </ListItem>
+                  </Link>
                   <Link className={classes.link} to="/nhan-vien">
                     <ListItem button>
                       <ListItemIcon>{<InboxIcon />}</ListItemIcon>
                       <ListItemText primary="Nhân Viên" />
                     </ListItem>
                   </Link>
+                </List>
+              }
 
-                }
-              </List>
-              <Divider />
             </div>
           </div>
         </SwipeableDrawer>

@@ -24,65 +24,68 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
+import { FormControl, InputLabel } from '@material-ui/core';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import axios from 'axios';
 
 
-const columns = [
-    {
-        id: "date",
-        label: "Date"
-    },
-    {
-        id: "shift",
-        label: "Shift",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toLocaleString()
-    },
-    {
-        id: "targer",
-        label: "Q'ty Target",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toLocaleString()
-    },
-    {
-        id: "actual",
-        label: "Q'ty Actual",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toFixed(2)
-    },
-    {
-        id: "efficiency",
-        label: "Efficiency",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toLocaleString()
-    },
-    {
-        id: "status",
-        label: "Remark",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toLocaleString()
-    },
-    {
-        id: "pic",
-        label: "PIC",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toLocaleString()
-    },
-    {
-        id: "remark",
-        label: "Remark",
-        // minWidth: 170,
-        // align: "right",
-        // format: value => value.toLocaleString()
-    },
+// const columns = [
+//     {
+//         id: "date",
+//         label: "Date"
+//     },
+//     {
+//         id: "shift",
+//         label: "Shift",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toLocaleString()
+//     },
+//     {
+//         id: "targer",
+//         label: "Q'ty Target",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toLocaleString()
+//     },
+//     {
+//         id: "actual",
+//         label: "Q'ty Actual",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toFixed(2)
+//     },
+//     {
+//         id: "efficiency",
+//         label: "Efficiency",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toLocaleString()
+//     },
+//     {
+//         id: "status",
+//         label: "Remark",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toLocaleString()
+//     },
+//     {
+//         id: "pic",
+//         label: "PIC",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toLocaleString()
+//     },
+//     {
+//         id: "remark",
+//         label: "Remark",
+//         // minWidth: 170,
+//         // align: "right",
+//         // format: value => value.toLocaleString()
+//     },
 
-];
+// ];
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -115,6 +118,13 @@ const useStyles = makeStyles((theme) => ({
     },
     table: {
         minWidth: 100,
+
+    },
+    formControl: {
+        // margin: theme.spacing(1),
+
+        minWidth: "100%",
+        // border: "2px solid #ff0000"
 
     },
     buttons: {
@@ -190,9 +200,7 @@ const ListUser = () => {
             url: "/account/nhan-vien/",
             headers: { "Content-Type": "application/json" },
         }).then((res) => {
-            console.log(res.data);
             setRows(res.data);
-            console.log(rows);
         });
     };
 
@@ -218,6 +226,41 @@ const ListUser = () => {
     //     last_name: "",
     //     first_name: "",
     // });
+
+    const selectPosition = [
+        {
+            position: 'Admin',
+        },
+        {
+            position: 'Manager',
+        },
+        {
+            position: 'Leader',
+        },
+        {
+            position: 'Nhân Viên',
+        },
+    ];
+
+    const selectPosition1 = [
+        {
+            position: 'Admin',
+            value: 'Leve 4',
+        },
+        {
+            position: 'Manager',
+            value: 'Leve 3',
+        },
+        {
+            position: 'Leader',
+            value: 'Leve 2',
+        },
+        {
+            position: 'Nhân Viên',
+            value: 'Leve 1'
+        },
+    ];
+
 
     const hanldeSearch = () => {
         setOpenSearch(!openSearch);
@@ -246,7 +289,6 @@ const ListUser = () => {
         setOpenInfor(true);
 
     };
-
 
     const hanldeBTNEdit = (user_id) => {
         setOpenCheckPW(false);
@@ -316,7 +358,7 @@ const ListUser = () => {
     const hanldeBTNUpdate = () => {
 
 
-        if (updateName == "" || updateCode == "" || updatePosition == "") {
+        if (updateName === "" || updateCode === "" || updatePosition === "") {
             alert(" Hãy Nhập Đủ Thông Tin");
         } else {
             let data = new FormData()
@@ -326,7 +368,7 @@ const ListUser = () => {
 
 
             if (openCheckPW) {
-                if (updatePassword != "" && updatePassword === updateRePassword) {
+                if (updatePassword !== "" && updatePassword === updateRePassword) {
                     data.append('password', updatePassword);
                     updateUser(data);
                     setOpenInfor(false);
@@ -453,19 +495,26 @@ const ListUser = () => {
                             />
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="position"
-                                label="Chức Vụ"
-                                name="position"
-                                onChange={((e) => {
-                                    setCreatePosition(e.target.value);
-                                })}
-                            />
+                            <FormControl variant="outlined" className={classes.formControl}>
+                                <InputLabel id="demo-simple-select-outlined-label">Chức Vụ</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-outlined-label"
+                                    id="demo-simple-select-outlined"
+                                    onChange={((e) => {
+                                        setCreatePosition(e.target.value);
+                                    })}
+                                    label="Chức Vụ"
+                                >
+                                    {selectPosition.map((option) => (
+                                        <MenuItem key={option.position} value={option.position}>
+                                            {option.position}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={12}>
+
                             <TextField
                                 variant="outlined"
                                 required
@@ -549,19 +598,24 @@ const ListUser = () => {
                             />
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                            <TextField
-
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id="position"
-                                label="Chức Vụ"
-                                name="position"
-                                defaultValue={updatePosition}
-                                onChange={((e) => {
-                                    setUpdatePosition(e.target.value);
-                                })}
-                            />
+                            <FormControl variant="outlined" className={classes.formControl}>
+                                <InputLabel id="demo-simple-select-outlined-label">Chức Vụ</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-outlined-label"
+                                    id="demo-simple-select-outlined"
+                                    value={updatePosition}
+                                    onChange={((e) => {
+                                        setUpdatePosition(e.target.value);
+                                    })}
+                                    label="Chức Vụ"
+                                >
+                                    {selectPosition.map((option) => (
+                                        <MenuItem key={option.position} value={option.position}>
+                                            {option.position}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
                         </Grid>
                         {
                             openCheckPW ?
@@ -703,14 +757,25 @@ const ListUser = () => {
                                     <Typography>
                                         <b>Chức Vụ</b>
                                     </Typography>
-                                    <TextField
-                                        id="searchPosition"
-                                        name="searchPosition"
-                                        onChange={((e) => {
-                                            setSearchPosition(e.target.value);
-                                        })}
-                                        autoComplete="searchPosition"
-                                    />
+
+                                    <FormControl className={classes.formControl}>
+                                        {/* <InputLabel id="demo-simple-select-label">Chức Vụ</InputLabel> */}
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            required
+                                            fullWidth
+                                            onChange={((e) => {
+                                                setSearchPosition(e.target.value);
+                                            })}
+                                        >
+                                            {selectPosition1.map((option) => (
+                                                <MenuItem key={option.position} value={option.value}>
+                                                    {option.position}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
                                 <Grid item xs={6} sm={2}>
                                     <Typography align="center">

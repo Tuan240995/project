@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from accounts.serializers import UserSerializer
 from app.models import Product, Line,  Make
 
@@ -61,6 +62,9 @@ class MakeSerializer(serializers.ModelSerializer):
         representation['finish'] = int(instance.finish)
         representation['created_at'] = instance.created_at.strftime('%d-%m-%Y')
         representation['time'] = instance.created_at.strftime('%H:%M:%S')
+        list_worker =  self._get_staff(instance)
+        representation["total_staff"] = len(list_worker)
+        representation["staff"] = list_worker
         representation['efficiency'] = round((int(instance.finish) / int(instance.targer)) * 100, 1)
         representation['missing'] = self._get_missing(instance)
         return representation
@@ -70,3 +74,12 @@ class MakeSerializer(serializers.ModelSerializer):
             return (int(instance.targer) - int(instance.finish))
         else :
             return 0
+
+    def _get_staff(self, instance):
+        list_user = []
+        if instance.staff:
+            users =  (instance.staff).split(", ")
+            for user in users:
+                u = User.objects.get(username=user);
+                list_user.append(UserSerializer(u).data)
+        return list_user

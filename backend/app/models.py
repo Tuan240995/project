@@ -31,6 +31,7 @@ class Make(models.Model):
     finish = models.CharField(max_length=200, blank=True, default ="0")
     status = models.CharField(max_length=200, blank=True, default ="RUN")
     shift = models.CharField(max_length=200, choices=SHIFT_CHOIES, default ="MS")
+    staff = models.CharField(max_length=500, blank=True, default ="")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

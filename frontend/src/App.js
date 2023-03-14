@@ -11,6 +11,7 @@ import MakeLine from "./views/line/MakeLine";
 import AddMake from "./views/make/AddMake";
 import Shows from "./views/show/Shows";
 import ListUser from "./views/user/ListUser";
+import ManagerLine from "./views/user/ManagerLine";
 
 
 export default function App() {
@@ -26,9 +27,11 @@ export default function App() {
               {/* <Route path="/day-chuyen/line-1" component={MakeLine} /> */}
               <Route path="/san-xuat" component={AddMake} />
               <Route path="/van-hanh" component={MakeLine} />
-              {authService.userAccess().admin === "true" &&
-                <Route path="/nhan-vien" component={ListUser} />
-              }
+              {/* {authService.userAccess().admin === "true" && */}
+              
+              <Route path="/nhan-vien" component={ListUser} />
+              <Route path="/quan-ly-chung" component={ManagerLine} />
+              {/* } */}
               <Route path="/quet-qr" component={Shows} />
               <Route path="/" component={Shows} />
             </Switch>

@@ -250,10 +250,10 @@ export default function MenuApp() {
               <Divider />
               {authService.userAccess().admin === "true" &&
                 <List>
-                  <Link className={classes.link} to="/quet-qr">
+                  <Link className={classes.link} to="/quan-ly-chung">
                     <ListItem button>
                       <ListItemIcon>{<InboxIcon />}</ListItemIcon>
-                      <ListItemText primary="Quản Lý" />
+                      <ListItemText primary="Quản Lý Chung" />
                     </ListItem>
                   </Link>
                   <Link className={classes.link} to="/nhan-vien">

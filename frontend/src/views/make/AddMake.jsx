@@ -110,15 +110,22 @@ const AddMake = () => {
     };
 
     const addMake = (makeId, pc) => {
-        const data = lineValue;
-        data.finish += pc;
+
+        var m_finish = lineValue.finish += pc;
+        let data = new FormData()
+        data.append('make_id', makeId)
+        data.append('is_make', "True")
+        data.append('m_finish', m_finish)
+
         axios({
-            method: "PUT",
-            url: "/api/make/" + makeId + "/",
+            method: "POST",
+            url: "/api/update_make/",
             headers: { "Content-Type": "application/json" },
-            data: data
+            data: data,
         }).then((res) => {
-            setLineValue(res.data);
+            if (res.data.success === "true") {
+                setLineValue(res.data.data);
+            }
         });
     };
 
@@ -127,10 +134,10 @@ const AddMake = () => {
 
 
     const handleChangeLine = (event) => {
-        if(listLine===[]){
+        if (listLine === []) {
             alert("Không có dây chuyền nào đang vận hành");
         }
-        else{
+        else {
             setLine(event.target.value);
             getMake(event.target.value);
         }
@@ -282,14 +289,14 @@ const AddMake = () => {
                                 <Grid container spacing={3}>
                                     <Grid item xs={12} sm={5}>
                                         <Typography className={classes.text} component="h5" variant="h6" align="center">
-                                            Thời gian
+                                            {/* Thời gian */}
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={12} sm={6}>
+                                    {/* <Grid item xs={12} sm={6}>
                                         <Typography className={classes.text_value} component="h5" variant="h5" align="center">
                                             <strong>{hours} : {minutes}</strong>
                                         </Typography>
-                                    </Grid>
+                                    </Grid> */}
                                     <Grid item xs={12} sm={12}>
                                         <div className={classes.buttons}>
                                             <Button

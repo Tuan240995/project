@@ -350,7 +350,7 @@ const ListUser = () => {
         }).then((res) => {
             alert("Cập Nhập Thành Công")
             setOpenCheckPW(false);
-            setOpenInfor(false);
+            // setOpenInfor(false);
             getData()
         }).catch(error => alert(error));
     }
@@ -576,7 +576,7 @@ const ListUser = () => {
                                 id="name"
                                 label="Họ và Tên"
                                 name="name"
-                                defaultValue={updateName}
+                                value={updateName}
                                 onChange={((e) => {
                                     setUpdateName(e.target.value);
                                 })}
@@ -591,7 +591,7 @@ const ListUser = () => {
                                 id="code"
                                 label="Mã Nhân Viên"
                                 name="code"
-                                defaultValue={updateCode}
+                                value={updateCode}
                                 onChange={((e) => {
                                     setUpdateCode(e.target.value);
                                 })}

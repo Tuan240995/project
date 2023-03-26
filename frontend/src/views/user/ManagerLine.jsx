@@ -113,6 +113,12 @@ const ManagerLine = () => {
     const [openSearchLine, setOpenSearchLine] = React.useState(false);
     const [openCreateLine, setOpenCreateLine] = React.useState(false);
     const [openUpdateLine, setOpenUpdateLine] = React.useState(false);
+    const [valueSearchLine, setValueSearchLine] = React.useState("");
+    const [valueCreateLine, setValueCreateLine] = React.useState("");
+    const [valueUpdateLine, setValueUpdateLine] = React.useState({
+        id: "",
+        name: "",
+    });
 
     const [openSearchProduct, setOpenSearchProduct] = React.useState(false);
     const [openCreateProduct, setOpenCreateProduct] = React.useState(false);
@@ -211,17 +217,46 @@ const ManagerLine = () => {
         setOpenUpdateLine(false);
     };
 
-    const hanldeCreateLine = () => {
+    const hanldeCreateLine = (nameLine) => {
         setOpenCreateLine(!openCreateLine);
         setOpenSearchLine(false);
         setOpenUpdateLine(false);
 
+        let data = new FormData()
+        data.append('name', valueCreateLine)
+
+        axios({
+            method: "POST",
+            url: "/api/line/",
+            headers: { "Content-Type": "application/json" },
+            data: data,
+        }).then((res) => {
+            if (res.data.success === "true") {
+                getDataLine();
+            }
+        });
+
     };
 
 
-    const hanldeEditLine = () => {
-
+    const hanldeEditLine = (line_id) => {
+        setOpenCreateLine(false);
+        setOpenSearchLine(false);
+        setOpenUpdateLine(false);
+        const line = rowsLine.filter((item) => item.id === line_id);
+        console.log(line)
+        setValueUpdateLine({
+            id: line[0].id,
+            name: line[0].name,
+        })
+        test();
     }
+
+    const test = () => {
+        setOpenCreateLine(false);
+        setOpenSearchLine(false);
+        setOpenUpdateLine(true);
+    };
 
     const hanldeUpdateLine = () => {
 
@@ -322,12 +357,12 @@ const ManagerLine = () => {
                                     <b>Tên</b>
                                 </Typography>
                                 <TextField
-                                    id="searchUserName"
-                                    name="searchUserName"
-                                    // onChange={(e) => {
-                                    //     setSearchUserName(e.target.value);
-                                    // }}
-                                    autoComplete="searchUserName"
+                                    id="searchLine"
+                                    name="searchLine"
+                                    onChange={(e) => {
+                                        setValueSearchLine(e.target.value);
+                                    }}
+                                    autoComplete="searchLine"
                                 />
                             </Grid>
                             <Grid item xs={6} sm={1}></Grid>
@@ -366,12 +401,12 @@ const ManagerLine = () => {
                                     <b>Tên</b>
                                 </Typography>
                                 <TextField
-                                    id="searchUserName"
-                                    name="searchUserName"
-                                    // onChange={(e) => {
-                                    //     setSearchUserName(e.target.value);
-                                    // }}
-                                    autoComplete="searchUserName"
+                                    id="CreateLine"
+                                    name="CreateLine"
+                                    onChange={(e) => {
+                                        setValueCreateLine(e.target.value);
+                                    }}
+                                    autoComplete="CreateLine"
                                 />
                             </Grid>
 
@@ -422,12 +457,13 @@ const ManagerLine = () => {
                                     <b>Tên</b>
                                 </Typography>
                                 <TextField
-                                    id="searchUserName"
-                                    name="searchUserName"
-                                    // onChange={(e) => {
-                                    //     setSearchUserName(e.target.value);
-                                    // }}
-                                    autoComplete="searchUserName"
+                                    id="updateLine"
+                                    name="updateLine"
+                                    value={valueUpdateLine.name}
+                                    onChange={(e) => {
+                                        setValueUpdateLine.name(e.target.value);
+                                    }}
+                                    autoComplete="updateLine"
                                 />
                             </Grid>
                             <Grid item xs={6} sm={1}></Grid>
@@ -445,7 +481,7 @@ const ManagerLine = () => {
                             <Grid item xs={6} sm={2}>
                                 <Typography align="center">
                                     <Button
-                                        // onClick={hanldeCancelLine}
+                                        onClick={hanldeCancelLine}
                                         variant="contained"
                                         color="secondary"
                                     >

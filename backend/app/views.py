@@ -55,9 +55,9 @@ class AppMake(ModelViewSet):
     # def update(self, request, *args, **kwargs):
     #     partial = kwargs.pop('partial', False)
     #     instance = self.get_object()
-    #     request.data["product"] = Product.objects.get(name=request.data["product"]).id
-    #     request.data["line"] = Line.objects.get(name=request.data["line"]).id
-    #     request.data["pic"] = User.objects.get(username=request.data["pic"]).id
+    #     # request.data["product"] = Product.objects.get(name=request.data["product"]).id
+    #     # request.data["line"] = Line.objects.get(name=request.data["line"]).id
+    #     # request.data["pic"] = User.objects.get(username=request.data["pic"]).id
     #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
     #     serializer.is_valid(raise_exception=True)
     #     self.perform_update(serializer)
@@ -133,6 +133,14 @@ class UpdateMake(APIView):
         shift = self.request.data.get("shift", None)
         targer = self.request.data.get("targer", None)
         staff = self.request.data.get("staff", None)
+        is_make = self.request.data.get("is_make", False)
+        m_finish = self.request.data.get("m_finish", None)
+
+        if is_make and make_id and m_finish:
+            make = Make.objects.get(id=make_id)
+            make.finish = m_finish
+            make.save()
+            return Response({'success':'true','data': MakeSerializer(make).data}, status=200)
 
         if make_id and product and shift and targer:
             try:

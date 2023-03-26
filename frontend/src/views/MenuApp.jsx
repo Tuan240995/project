@@ -221,32 +221,50 @@ export default function MenuApp() {
             onClick={toggleDrawer(false)}
             onKeyDown={toggleDrawer(false)}>
             <div className={classes.fullList}>
-              <List>
-                <Link className={classes.link} to="/day-chuyen">
-                  <ListItem button>
-                    <ListItemIcon>{<InboxIcon />}</ListItemIcon>
-                    <ListItemText primary="Dây Chuyền" />
-                  </ListItem>
-                </Link>
-                <Link className={classes.link} to="/lap-giap">
-                  <ListItem button>
-                    <ListItemIcon>{<InboxIcon />}</ListItemIcon>
-                    <ListItemText primary="Lắp Giáp" />
-                  </ListItem>
-                </Link>
-                <Link className={classes.link} to="/san-xuat">
-                  <ListItem button>
-                    <ListItemIcon>{<InboxIcon />}</ListItemIcon>
-                    <ListItemText primary="San Xuat" />
-                  </ListItem>
-                </Link>
-                <Link className={classes.link} to="/quet-qr">
-                  <ListItem button>
-                    <ListItemIcon>{<InboxIcon />}</ListItemIcon>
-                    <ListItemText primary="Quet Qr" />
-                  </ListItem>
-                </Link>
-              </List>
+              {authService.userAccess().position === "Nhân Viên" ?
+                <List>
+                  <Link className={classes.link} to="/san-xuat">
+                    <ListItem button>
+                      <ListItemIcon>{<InboxIcon />}</ListItemIcon>
+                      <ListItemText primary="San Xuat" />
+                    </ListItem>
+                  </Link>
+                  <Link className={classes.link} to="/quet-qr">
+                    <ListItem button>
+                      <ListItemIcon>{<InboxIcon />}</ListItemIcon>
+                      <ListItemText primary="Quet Qr" />
+                    </ListItem>
+                  </Link>
+                </List>
+                :
+                <List>
+                  <Link className={classes.link} to="/day-chuyen">
+                    <ListItem button>
+                      <ListItemIcon>{<InboxIcon />}</ListItemIcon>
+                      <ListItemText primary="Dây Chuyền" />
+                    </ListItem>
+                  </Link>
+                  <Link className={classes.link} to="/lap-giap">
+                    <ListItem button>
+                      <ListItemIcon>{<InboxIcon />}</ListItemIcon>
+                      <ListItemText primary="Lắp Giáp" />
+                    </ListItem>
+                  </Link>
+                  <Link className={classes.link} to="/san-xuat">
+                    <ListItem button>
+                      <ListItemIcon>{<InboxIcon />}</ListItemIcon>
+                      <ListItemText primary="San Xuat" />
+                    </ListItem>
+                  </Link>
+                  <Link className={classes.link} to="/quet-qr">
+                    <ListItem button>
+                      <ListItemIcon>{<InboxIcon />}</ListItemIcon>
+                      <ListItemText primary="Quet Qr" />
+                    </ListItem>
+                  </Link>
+                </List>
+              }
+
               <Divider />
               {authService.userAccess().admin === "true" &&
                 <List>

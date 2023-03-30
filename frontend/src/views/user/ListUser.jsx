@@ -15,6 +15,7 @@ import Button from '@material-ui/core/Button';
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/icons/Search";
+import CachedIcon from '@material-ui/icons/Cached';
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import AddIcon from "@material-ui/icons/Add";
@@ -27,6 +28,7 @@ import Slide from '@material-ui/core/Slide';
 import { FormControl, InputLabel } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import AlertMassage from "../../components/AlertMassage";
 import axios from 'axios';
 
 
@@ -160,6 +162,9 @@ const ListUser = () => {
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
     const [rows, setRows] = React.useState([]);
+
+    const [status, setStatusBase] = React.useState("");
+
     const [openSearch, setOpenSearch] = React.useState(false);
     const [openInfor, setOpenInfor] = React.useState(false);
     const [openCheck, setOpenCheck] = React.useState(false);
@@ -277,9 +282,7 @@ const ListUser = () => {
             },
             headers: { "Content-Type": "application/json" },
         }).then((res) => {
-            console.log(res.data);
             setRows(res.data);
-            console.log(rows);
         });
     }
 
@@ -333,13 +336,18 @@ const ListUser = () => {
         }).then(res => {
             if (res.data.success === "true") {
                 getData();
+                setStatusBase({ msg: "Tạo Tài Khoản Thành Công", key: Math.random() });
             } else {
                 alert(res.data.message);
             }
-        }).catch(error => alert("Tạo tài khoan bị lỗi"));
+        }).catch(error => alert("Tạo tài khoản bị lỗi"));
 
     };
-
+    const hanldeReload = () => {
+        getData();
+        setOpenSearch(false);
+        hanldeBTNCancel();
+    };
 
     const updateUser = (data) => {
         axios({
@@ -348,7 +356,8 @@ const ListUser = () => {
             headers: { "Content-Type": "application/json" },
             data: data
         }).then((res) => {
-            alert("Cập Nhập Thành Công")
+            setStatusBase({ msg: "Cập Nhập Thành Công", key: Math.random() });
+            // alert("Cập Nhập Thành Công")
             setOpenCheckPW(false);
             // setOpenInfor(false);
             getData()
@@ -709,6 +718,13 @@ const ListUser = () => {
                         <strong>Quản Lý Nhân Viên</strong>
                     </Typography>
                     <Typography align="right" >
+                    <IconButton>
+                        <CachedIcon
+                            variant="contained"
+                            onClick={hanldeReload}
+                            color="primary"
+                        />
+                    </IconButton>
                         <IconButton>
                             <SearchIcon
                                 variant="contained"
@@ -719,7 +735,7 @@ const ListUser = () => {
                         <IconButton>
                             <AddIcon
                                 variant="contained"
-                                color={"inherit"}
+                                color="primary"
                                 onClick={hanldeBTNAdd}
                             />
                         </IconButton>
@@ -840,7 +856,7 @@ const ListUser = () => {
                         </DialogActions>
                     </Dialog>
                 </div>
-
+                {status ? <AlertMassage key={status.key} message={status.msg} /> : null}
             </main>
         </React.Fragment>
     );

@@ -9,19 +9,20 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from app.models import Product, Line, Make
 from app.serializers import ProductSerializer, LineSerializer, MakeSerializer
-from app.filters import LineFilter, MakeFilter
+from app.filters import ProductFilter, LineFilter, MakeFilter
 
 
 class AppProduct(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class  = ProductSerializer
-    http_method_names = ['get', 'post', 'put']
+    filterset_class = ProductFilter
+    http_method_names = ['get', 'post', 'put', 'delete']
 
 class AppLine(ModelViewSet):
     queryset = Line.objects.all()
     serializer_class  = LineSerializer
     filterset_class = LineFilter
-    http_method_names = ['get', 'post', 'put']
+    http_method_names = ['get', 'post', 'put', 'delete']
 
 
 class AppMake(ModelViewSet):

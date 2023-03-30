@@ -12,16 +12,22 @@ import SearchIcon from "@material-ui/icons/Search";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import AddIcon from "@material-ui/icons/Add";
+import CachedIcon from '@material-ui/icons/Cached';
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
-import FormControl from "@material-ui/core/FormControl";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
+import Slide from "@material-ui/core/Slide";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import AlertMassage from "../../components/AlertMassage";
 import axios from "axios";
+
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -84,9 +90,8 @@ const useStyles = makeStyles((theme) => ({
         color: "#32CD32",
     },
     buttons: {
-        display: 'flex',
-        justifyContent: 'flex-end',
-
+        display: "flex",
+        justifyContent: "flex-end",
     },
     formControl: {
         // margin: theme.spacing(1),
@@ -105,6 +110,10 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const ManagerLine = () => {
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
@@ -115,6 +124,7 @@ const ManagerLine = () => {
     const [openUpdateLine, setOpenUpdateLine] = React.useState(false);
     const [valueSearchLine, setValueSearchLine] = React.useState("");
     const [valueCreateLine, setValueCreateLine] = React.useState("");
+    const [valueDeleteLine, setValueDeleteLine] = React.useState("");
     const [valueUpdateLine, setValueUpdateLine] = React.useState({
         id: "",
         name: "",
@@ -123,7 +133,21 @@ const ManagerLine = () => {
     const [openSearchProduct, setOpenSearchProduct] = React.useState(false);
     const [openCreateProduct, setOpenCreateProduct] = React.useState(false);
     const [openUpdateProduct, setOpenUpdateProduct] = React.useState(false);
+    const [valueCreateProductName, setValueCreateProductName] = React.useState("");
+    const [valueCreateProductQr, setValueCreateProductQr] = React.useState("");
+    const [valueDeleteProduct, setValueDeleteProduct] = React.useState("");
+    const [valueSearchProductName, setValueSearchProductName] = React.useState("");
+    const [valueSearchProductKey, setValueSearchProductKey] = React.useState("");
+    const [valueUpdateProduct, setValueUpdateProduct] = React.useState({
+        id: "",
+        name: "",
+        key_qr: "",
+    });
 
+    const [openIsCheckLine, setOpenIsCheckLine] = React.useState(false);
+    const [openIsCheckProduct, setOpenIsCheckProduct] = React.useState(false);
+
+    const [status, setStatusBase] = React.useState("");
 
     const [rowsLine, setRowsLine] = React.useState([]);
     const [rowsProduct, setRowsProduct] = React.useState([]);
@@ -183,122 +207,265 @@ const ManagerLine = () => {
         setPage(0);
     };
 
-
-    const hanldeBTNAdd = () => {
-        // console.log(open);
-        // setOpen(!open);
+    const handleCloseCheckLine = () => {
+        setOpenIsCheckLine(false);
     };
 
-    const hanldeBTNSearch = () => {
-        console.log(startDay);
-        console.log(toDay);
-        console.log(shift);
-        console.log(pic);
-        axios({
-            method: "GET",
-            url: "/api/make/",
-            params: {
-                start_day: startDay,
-                to_day: toDay,
-                shift: shift,
-                pic: pic,
-            },
-            headers: { "Content-Type": "application/json" },
-        }).then((res) => {
-            setRows(res.data);
-        });
+    const handleCloseCheckProduct = () => {
+        setOpenIsCheckProduct(false);
+    };
+
+    const hanldeReloadLine = () => {
+        getDataLine();
+        hanldeCancelLine();
     };
 
     //Hanlde Line
 
-    const hanldeSearchLine = () => {
+    const hanldeOpenSearchLine = () => {
         setOpenSearchLine(!openSearchLine);
         setOpenCreateLine(false);
         setOpenUpdateLine(false);
+
+        if (openSearchLine === true) {
+            getDataLine();
+        }
+    };
+    const hanldeSearchLine = () => {
+        axios({
+            method: "GET",
+            url: "/api/line/",
+            params: {
+                name: valueSearchLine,
+            },
+            headers: { "Content-Type": "application/json" },
+        }).then((res) => {
+            setRowsLine(res.data);
+        });
     };
 
-    const hanldeCreateLine = (nameLine) => {
+    const hanldeOpenCreateLine = () => {
         setOpenCreateLine(!openCreateLine);
         setOpenSearchLine(false);
         setOpenUpdateLine(false);
-
-        let data = new FormData()
-        data.append('name', valueCreateLine)
-
-        axios({
-            method: "POST",
-            url: "/api/line/",
-            headers: { "Content-Type": "application/json" },
-            data: data,
-        }).then((res) => {
-            if (res.data.success === "true") {
-                getDataLine();
-            }
-        });
-
     };
 
+    const hanldeCreateLine = () => {
+        if (valueCreateLine === "") {
+            alert("Hãy Nhập Tên Dây Chuyền")
+        } else {
+            let data = new FormData();
+            data.append("name", valueCreateLine);
+
+            axios({
+                method: "POST",
+                url: "/api/line/",
+                headers: { "Content-Type": "application/json" },
+                data: data,
+            }).then((res) => {
+                if (res.status === 201) {
+                    getDataLine();
+                    setStatusBase({ msg: "Tạo Dây Chuyền Thành Công", key: Math.random() });
+                    hanldeCancelLine();
+                }
+                else {
+                    setStatusBase({ msg: "Thao Tác Bị Lỗi..", key: Math.random() });
+                }
+            });
+        }
+    };
 
     const hanldeEditLine = (line_id) => {
         setOpenCreateLine(false);
         setOpenSearchLine(false);
-        setOpenUpdateLine(false);
+        setOpenUpdateLine(true);
         const line = rowsLine.filter((item) => item.id === line_id);
-        console.log(line)
         setValueUpdateLine({
             id: line[0].id,
             name: line[0].name,
-        })
-        test();
-    }
-
-    const test = () => {
-        setOpenCreateLine(false);
-        setOpenSearchLine(false);
-        setOpenUpdateLine(true);
+        });
     };
 
     const hanldeUpdateLine = () => {
+        if (valueUpdateLine.name === "") {
+            alert("Hãy Nhập Tên Dây Chuyền")
+        } else {
+            let data = new FormData();
+            data.append("name", valueUpdateLine.name);
+            axios({
+                method: "PUT",
+                url: "/api/line/" + valueUpdateLine.id + "/",
+                headers: { "Content-Type": "application/json" },
+                data: data,
+            }).then((res) => {
+                console.log(res);
+                console.log(res.status);
+                if (res.status === 200) {
+                    getDataLine();
+                    // alert("Update Thành Công");
+                    setStatusBase({ msg: "Cập Nhập Dây Chuyền Thành Công", key: Math.random() });
+                    hanldeCancelLine();
+                } else {
+                    setStatusBase({ msg: "Thao Tác Bị Lỗi..", key: Math.random() });
+                }
+            });
+        }
+    };
 
-    }
-
-    const hanldeDeleteLine = () => {
-
-    }
+    const hanldeDeleteLine = (line_id) => {
+        setOpenIsCheckLine(true);
+        setValueDeleteLine(line_id);
+    };
+    const handleDeleteCheckLine = () => {
+        handleCloseCheckLine();
+        axios({
+            method: "DELETE",
+            url: "/api/line/" + valueDeleteLine + "/",
+        }).then((res) => {
+            if (res.status === 204) {
+                getDataLine();
+                setValueDeleteLine("");
+                // alert("Delete Thành Công");
+                setStatusBase({ msg: "Xóa Dây Chuyền Thành Công", key: Math.random() });
+            } else {
+                setStatusBase({ msg: "Thao Tác Bị Lỗi..", key: Math.random() });
+            }
+        });
+    };
 
     const hanldeCancelLine = () => {
         setOpenCreateLine(false);
         setOpenSearchLine(false);
         setOpenUpdateLine(false);
-
     };
 
-    // Hanlde Product
+    // Hanlde Product ====================
+    const hanldeReloadProduct = () => {
+        getDataProduct();
+        hanldeCancelProduct();
+    };
 
-    const hanldeSearchProduct = () => {
+
+    const hanldeOpenSearchProduct = () => {
         setOpenSearchProduct(!openSearchProduct);
         setOpenCreateProduct(false);
+        setOpenUpdateProduct(false);
+
+        if (openSearchProduct === true) {
+            getDataProduct();
+        }
+    };
+
+    const hanldeSearchProduct = () => {
+        axios({
+            method: "GET",
+            url: "/api/product/",
+            params: {
+                name: valueSearchProductName,
+                key_QR: valueSearchProductKey,
+            },
+            headers: { "Content-Type": "application/json" },
+        }).then((res) => {
+            setRowsProduct(res.data);
+        });
+    };
+
+
+    const hanldeOpenCreateProduct = () => {
+        setOpenCreateProduct(!openCreateProduct);
+        setOpenSearchProduct(false);
         setOpenUpdateProduct(false);
     };
 
     const hanldeCreateProduct = () => {
-        setOpenCreateProduct(!openCreateProduct);
-        setOpenSearchProduct(false);
-        setOpenUpdateProduct(false);
+        if (valueCreateProductName === "") {
+            alert("Hãy Nhập Tên Sản Phẩm")
+        } else if (valueCreateProductQr === "") {
+            alert("Hãy Nhập Tên Mã QR")
+        } else {
+            let data = new FormData();
+            data.append("name", valueCreateProductName);
+            data.append("key_QR", valueCreateProductQr);
 
+            axios({
+                method: "POST",
+                url: "/api/product/",
+                headers: { "Content-Type": "application/json" },
+                data: data,
+            }).then((res) => {
+                if (res.status === 201) {
+                    getDataProduct();
+                    // alert("Create Thành Công");
+                    setStatusBase({ msg: "Tạo Sản Phẩm Thành Công", key: Math.random() });
+                    hanldeCancelProduct();
+                } else {
+                    setStatusBase({ msg: "Thao Tác Bị Lỗi..", key: Math.random() });
+                }
+            });
+        }
     };
 
-    const hanldeEditProduct = () => {
+    const hanldeEditProduct = (product_id) => {
+        setOpenSearchProduct(false);
+        setOpenCreateProduct(false);
+        setOpenUpdateProduct(true);
 
-    }
+        const product = rowsProduct.filter((item) => item.id === product_id);
+        setValueUpdateProduct({
+            id: product[0].id,
+            name: product[0].name,
+            key_qr: product[0].key_QR,
+        });
+    };
 
     const hanldeUpdateProduct = () => {
+        if (valueCreateProductName === "") {
+            alert("Hãy Nhập Tên Sản Phẩm")
+        } else if (valueCreateProductQr === "") {
+            alert("Hãy Nhập Tên Mã QR")
+        } else {
+            let data = new FormData();
+            data.append("name", valueUpdateProduct.name);
+            data.append("key_QR", valueUpdateProduct.key_qr);
+            axios({
+                method: "PUT",
+                url: "/api/product/" + valueUpdateProduct.id + "/",
+                headers: { "Content-Type": "application/json" },
+                data: data,
+            }).then((res) => {
 
-    }
+                if (res.status === 200) {
+                    getDataProduct();
+                    // alert("Update Thành Công");
+                    setStatusBase({ msg: "Cập Nhập Sản Phẩm Thành Công", key: Math.random() });
+                    hanldeCancelProduct();
+                } else {
+                    setStatusBase({ msg: "Thao Tác Bị Lỗi..", key: Math.random() });
+                }
+            });
+        }
+    };
 
-    const hanldeDeleteProduct = () => {
+    const hanldeDeleteProduct = (product_id) => {
+        setOpenIsCheckProduct(true);
+        setValueDeleteProduct(product_id);
+    };
 
-    }
+    const handleDeleteCheckProduct = () => {
+        handleCloseCheckProduct();
+        axios({
+            method: "DELETE",
+            url: "/api/product/" + valueDeleteProduct + "/",
+        }).then((res) => {
+            if (res.status === 204) {
+                getDataProduct();
+                // alert("Delete Thành Công");
+                setStatusBase({ msg: "Xóa Sản Phẩm Thành Công", key: Math.random() });
+            } else {
+                setStatusBase({ msg: "Thao Tác Bị Lỗi..", key: Math.random() });
+            }
+        });
+    };
 
     const hanldeCancelProduct = () => {
         setOpenSearchProduct(false);
@@ -306,19 +473,20 @@ const ManagerLine = () => {
         setOpenUpdateProduct(false);
     };
 
+
+
     const headLine = ["Tên", "Trạng Thái", ""];
     const headProduct = ["Tên", "Mã Qr", ""];
-    const selectStatus = [
-        {
-            position: 'RUN',
-            value: 'true',
-        },
-        {
-            position: 'STOP',
-            value: 'false',
-        }
-    ];
-
+    // const selectStatus = [
+    //     {
+    //         position: "RUN",
+    //         value: "true",
+    //     },
+    //     {
+    //         position: "STOP",
+    //         value: "false",
+    //     },
+    // ];
     const list_data_line = (
         <main className={classes.layout}>
             <Paper className={classes.paper}>
@@ -332,9 +500,16 @@ const ManagerLine = () => {
                 </Typography>
                 <Typography align="right">
                     <IconButton>
+                        <CachedIcon
+                            variant="contained"
+                            onClick={hanldeReloadLine}
+                            color="primary"
+                        />
+                    </IconButton>
+                    <IconButton>
                         <SearchIcon
                             variant="contained"
-                            onClick={hanldeSearchLine}
+                            onClick={hanldeOpenSearchLine}
                             color={openSearchLine ? "secondary" : "primary"}
                         />
                     </IconButton>
@@ -342,7 +517,7 @@ const ManagerLine = () => {
                         <AddIcon
                             variant="contained"
                             color={openCreateLine ? "secondary" : "primary"}
-                            onClick={hanldeCreateLine}
+                            onClick={hanldeOpenCreateLine}
                         />
                     </IconButton>
                 </Typography>
@@ -371,7 +546,7 @@ const ManagerLine = () => {
                                     <Button
                                         variant="contained"
                                         color="primary"
-                                    // onClick={hanldeSearchLine}
+                                        onClick={hanldeSearchLine}
                                     >
                                         Tìm Kiếm
                                     </Button>
@@ -381,7 +556,6 @@ const ManagerLine = () => {
                     </Paper>
                 )}
                 {/* ===============Search=======End======== */}
-
 
                 {/* ===============Create============== */}
                 {openCreateLine && (
@@ -409,7 +583,6 @@ const ManagerLine = () => {
                                     autoComplete="CreateLine"
                                 />
                             </Grid>
-
                         </Grid>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
@@ -426,7 +599,7 @@ const ManagerLine = () => {
                             <Grid item xs={12} sm={6}>
                                 <div className={classes.buttons}>
                                     <Button
-                                        // onClick={hanldeBTNCreate}
+                                        onClick={hanldeCreateLine}
                                         variant="contained"
                                         color="primary"
                                     >
@@ -461,7 +634,10 @@ const ManagerLine = () => {
                                     name="updateLine"
                                     value={valueUpdateLine.name}
                                     onChange={(e) => {
-                                        setValueUpdateLine.name(e.target.value);
+                                        setValueUpdateLine({
+                                            id: valueUpdateLine.id,
+                                            name: e.target.value,
+                                        });
                                     }}
                                     autoComplete="updateLine"
                                 />
@@ -472,7 +648,7 @@ const ManagerLine = () => {
                                     <Button
                                         variant="contained"
                                         color="primary"
-                                        onClick={hanldeCancelLine}
+                                        onClick={hanldeUpdateLine}
                                     >
                                         Update
                                     </Button>
@@ -549,9 +725,44 @@ const ManagerLine = () => {
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                 />
             </Paper>
+
+            <div>
+                <Dialog
+                    open={openIsCheckLine}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={handleCloseCheckLine}
+                    aria-labelledby="alert-dialog-slide-title"
+                    aria-describedby="alert-dialog-slide-description"
+                >
+                    <DialogTitle id="alert-dialog-slide-title">
+                        {"Xóa Dây Chuyền"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                            Bạn muốn xóa Dây Chuyền này không ?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={handleCloseCheckLine}
+                            color="primary"
+                            variant="contained"
+                        >
+                            No
+                        </Button>
+                        <Button
+                            onClick={handleDeleteCheckLine}
+                            color="secondary"
+                            variant="contained"
+                        >
+                            Yes
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
         </main>
     );
-
 
     const list_data_product = (
         <main className={classes.layout}>
@@ -566,9 +777,16 @@ const ManagerLine = () => {
                 </Typography>
                 <Typography align="right">
                     <IconButton>
+                        <CachedIcon
+                            variant="contained"
+                            onClick={hanldeReloadProduct}
+                            color="primary"
+                        />
+                    </IconButton>
+                    <IconButton>
                         <SearchIcon
                             variant="contained"
-                            onClick={hanldeSearchProduct}
+                            onClick={hanldeOpenSearchProduct}
                             color={openSearchProduct ? "secondary" : "primary"}
                         />
                     </IconButton>
@@ -576,7 +794,7 @@ const ManagerLine = () => {
                         <AddIcon
                             variant="contained"
                             color={openCreateProduct ? "secondary" : "primary"}
-                            onClick={hanldeCreateProduct}
+                            onClick={hanldeOpenCreateProduct}
                         />
                     </IconButton>
                 </Typography>
@@ -585,27 +803,39 @@ const ManagerLine = () => {
                 {openSearchProduct && (
                     <Paper className={classes.paper_search}>
                         <Grid container spacing={3}>
-                            <Grid item xs={6} sm={2}></Grid>
+                            <Grid item xs={6} sm={1}></Grid>
                             <Grid item xs={6} sm={4}>
                                 <Typography>
                                     <b>Tên</b>
                                 </Typography>
                                 <TextField
-                                    id="searchUserName"
-                                    name="searchUserName"
-                                    // onChange={(e) => {
-                                    //     setSearchUserName(e.target.value);
-                                    // }}
-                                    autoComplete="searchUserName"
+                                    id="searchProductName"
+                                    name="searchProductName"
+                                    onChange={(e) => {
+                                        setValueSearchProductName(e.target.value);
+                                    }}
+                                    autoComplete="searchProductName"
                                 />
                             </Grid>
-                            <Grid item xs={6} sm={1}></Grid>
+                            <Grid item xs={6} sm={4}>
+                                <Typography>
+                                    <b>Mã Qr</b>
+                                </Typography>
+                                <TextField
+                                    id="searchProductKey"
+                                    name="searchProductKey"
+                                    onChange={(e) => {
+                                        setValueSearchProductKey(e.target.value);
+                                    }}
+                                    autoComplete="searchProductKey"
+                                />
+                            </Grid>
                             <Grid item xs={6} sm={2}>
                                 <Typography align="center">
                                     <Button
                                         variant="contained"
                                         color="primary"
-                                    // onClick={hanldeSearchLine}
+                                        onClick={hanldeSearchProduct}
                                     >
                                         Tìm Kiếm
                                     </Button>
@@ -634,12 +864,12 @@ const ManagerLine = () => {
                                     <b>Tên</b>
                                 </Typography>
                                 <TextField
-                                    id="searchUserName"
-                                    name="searchUserName"
-                                    // onChange={(e) => {
-                                    //     setSearchUserName(e.target.value);
-                                    // }}
-                                    autoComplete="searchUserName"
+                                    id="createProductName"
+                                    name="createProductName"
+                                    onChange={(e) => {
+                                        setValueCreateProductName(e.target.value);
+                                    }}
+                                    autoComplete="createProductName"
                                 />
                             </Grid>
                             <Grid item xs={6} sm={4}>
@@ -647,16 +877,14 @@ const ManagerLine = () => {
                                     <b>Mã Qr</b>
                                 </Typography>
                                 <TextField
-                                    id="searchUserName"
-                                    name="searchUserName"
-                                    // onChange={(e) => {
-                                    //     setSearchUserName(e.target.value);
-                                    // }}
-                                    autoComplete="searchUserName"
+                                    id="createProductQr"
+                                    name="createProductQr"
+                                    onChange={(e) => {
+                                        setValueCreateProductQr(e.target.value);
+                                    }}
+                                    autoComplete="createProductQr"
                                 />
                             </Grid>
-
-
                         </Grid>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
@@ -673,7 +901,7 @@ const ManagerLine = () => {
                             <Grid item xs={12} sm={6}>
                                 <div className={classes.buttons}>
                                     <Button
-                                        // onClick={hanldeBTNCreate}
+                                        onClick={hanldeCreateProduct}
                                         variant="contained"
                                         color="primary"
                                     >
@@ -704,12 +932,17 @@ const ManagerLine = () => {
                                     <b>Tên</b>
                                 </Typography>
                                 <TextField
-                                    id="searchUserName"
-                                    name="searchUserName"
-                                    // onChange={(e) => {
-                                    //     setSearchUserName(e.target.value);
-                                    // }}
-                                    autoComplete="searchUserName"
+                                    id="updateProductName"
+                                    name="updateProductName"
+                                    value={valueUpdateProduct.name}
+                                    onChange={(e) => {
+                                        setValueUpdateProduct({
+                                            id: valueUpdateProduct.id,
+                                            name: e.target.value,
+                                            key_qr: valueUpdateProduct.key_qr
+                                        });
+                                    }}
+                                    autoComplete="updateProductName"
                                 />
                             </Grid>
                             <Grid item xs={6} sm={4}>
@@ -717,16 +950,19 @@ const ManagerLine = () => {
                                     <b>Mã Qr</b>
                                 </Typography>
                                 <TextField
-                                    id="searchUserName"
-                                    name="searchUserName"
-                                    // onChange={(e) => {
-                                    //     setSearchUserName(e.target.value);
-                                    // }}
-                                    autoComplete="searchUserName"
+                                    id="updateProductKey"
+                                    name="updateProductKey"
+                                    value={valueUpdateProduct.key_qr}
+                                    onChange={(e) => {
+                                        setValueUpdateProduct({
+                                            id: valueUpdateProduct.id,
+                                            name: valueUpdateProduct.name,
+                                            key_qr: e.target.value,
+                                        });
+                                    }}
+                                    autoComplete="updateProductKey"
                                 />
                             </Grid>
-
-
                         </Grid>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
@@ -743,11 +979,11 @@ const ManagerLine = () => {
                             <Grid item xs={12} sm={6}>
                                 <div className={classes.buttons}>
                                     <Button
-                                        // onClick={hanldeBTNCreate}
+                                        onClick={hanldeUpdateProduct}
                                         variant="contained"
                                         color="primary"
                                     >
-                                        Create
+                                        Update
                                     </Button>
                                 </div>
                             </Grid>
@@ -803,13 +1039,54 @@ const ManagerLine = () => {
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                 />
             </Paper>
+
+            <div>
+                <Dialog
+                    open={openIsCheckProduct}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={handleCloseCheckProduct}
+                    aria-labelledby="alert-dialog-slide-title"
+                    aria-describedby="alert-dialog-slide-description"
+                >
+                    <DialogTitle id="alert-dialog-slide-title">
+                        {"Xóa Sản Phẩm"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                            Bạn muốn xóa Sản Phẩm này không ?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={handleCloseCheckProduct}
+                            color="primary"
+                            variant="contained"
+                        >
+                            No
+                        </Button>
+                        <Button
+                            onClick={handleDeleteCheckProduct}
+                            color="secondary"
+                            variant="contained"
+                        >
+                            Yes
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
         </main>
     );
 
     const create_Line = (
         <main className={classes.layout}>
             <Paper className={classes.paper}>
-                <Typography className={classes.stepper} component="h1" variant="h5" align="center">
+                <Typography
+                    className={classes.stepper}
+                    component="h1"
+                    variant="h5"
+                    align="center"
+                >
                     <strong>Tạo Tài Khoản Nhân Viên</strong>
                 </Typography>
                 <React.Fragment>
@@ -884,6 +1161,7 @@ const ManagerLine = () => {
                             {/* {create_Line} */}
                         </Grid>
                     </Grid>
+                    {status ? <AlertMassage key={status.key} message={status.msg} /> : null}
                 </Paper>
             </main>
         </React.Fragment>

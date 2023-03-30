@@ -2,6 +2,11 @@ import django_filters
 from django_filters import rest_framework as filters
 from app.models import Product, Line, Make
 
+class ProductFilter(filters.FilterSet):
+    class Meta:
+        model = Product
+        fields = ['name', 'key_QR']
+
 class LineFilter(filters.FilterSet):
     class Meta:
         model = Line

@@ -143,25 +143,25 @@ class UpdateMake(APIView):
             make.save()
             return Response({'success':'true','data': MakeSerializer(make).data}, status=200)
 
-        if make_id and product and shift and targer:
+        if make_id and product and shift and targer and staff:
             try:
                 make = Make.objects.get(id=make_id)
                 if make.status == "RUN":
-                    user = User.objects.get(id=request.session["_auth_user_id"])
-                    if make.pic.username == user.username or user.is_superuser:
-                        set_user = set(staff.split(", "))
-                        make.product = Product.objects.get(name=product)
-                        make.shift = shift
-                        make.targer = targer
-                        make.staff = ', '.join(set_user)
-                        make.save()
-                        return Response({'success':'true'}, status=200)
-                    else:
-                        return Response({'success':'false', 'message':"Bạn không phải người vận hàng Line này."}, status=200)
+                    # user = User.objects.get(id=request.session["_auth_user_id"])
+                    # if make.pic.username == user.username or user.first_name in ["Leve 4", "Leve 3"]:
+                    set_user = set(staff.split(", "))
+                    make.product = Product.objects.get(name=product)
+                    make.shift = shift
+                    make.targer = targer
+                    make.staff = ', '.join(set_user)
+                    make.save()
+                    return Response({'success':'true'}, status=200)
+                    # else:
+                    # eturn Response({'success':'false', 'message':"Bạn không phải người vận hàng Line này."}, status=200)
                 else:
                     return Response({'success':'false', 'message': make.line.name + "không hoạt động."}, status=200)
             except:
-                return Response({'success':'false', 'message': "Cập nhập lại line bị lỗi"}, status=400)
+                return Response({'success':'false', 'message': "Cập nhập lại line bị lỗi, Hãy đăng nhập lại"}, status=400)
         return Response({'success':'false', 'message': "Cập nhập lại line bị lỗi"}, status=400)
 
         

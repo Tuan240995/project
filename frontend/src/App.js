@@ -13,6 +13,7 @@ import Shows from "./views/show/Shows";
 import ListUser from "./views/user/ListUser";
 import ManagerLine from "./views/user/ManagerLine";
 import AddQr from "./views/make/AddQr";
+import Monitor from "./views/monitor/Monitor";
 
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
           <MenuApp />
           <>
             <Switch>
+              <Route path="/giam-sat" component={Monitor} />
               <Route path="/day-chuyen" component={Line} />
               <Route path="/lap-giap" component={Make} />
               <Route path="/san-xuat" component={AddMake} />

@@ -7,6 +7,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Typography from '@material-ui/core/Typography';
 import Select from "@material-ui/core/Select";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
+import Slide from '@material-ui/core/Slide';
 import { useHistory, useLocation } from "react-router-dom";
 import { useTime } from "react-timer-hook";
 import Divider from '@material-ui/core/Divider';
@@ -66,6 +73,9 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const AddMake = () => {
     const classes = useStyles();
@@ -73,6 +83,7 @@ const AddMake = () => {
     const location = useLocation();
     const [line, setLine] = React.useState("");
     const [listLine, setListLine] = React.useState([]);
+    const [openUpdate, setOpenUpdate] = React.useState(false);
     const [lineValue, setLineValue] = React.useState({
         id: "",
         line: "",
@@ -83,6 +94,7 @@ const AddMake = () => {
         finish: "0",
         missing: "0",
     });
+    const [Product, setProduct] = React.useState(lineValue.finish);
 
     useEffect(() => {
         getLine();
@@ -157,7 +169,7 @@ const AddMake = () => {
         if (lineValue.id === "") {
             alert("Hãy chọn dây chuyền sản suất");
         } else {
-            addMake(lineValue.id, 12)
+            addMake(lineValue.id, 5)
         }
     }
 
@@ -165,17 +177,39 @@ const AddMake = () => {
         if (lineValue.id === "") {
             alert("Hãy chọn dây chuyền sản suất");
         } else {
-            addMake(lineValue.id, 24)
+            addMake(lineValue.id, 10)
+        }
+    }
+    const handleBtnNhapTay = () => {
+        if (lineValue.id === "") {
+            alert("Hãy chọn dây chuyền sản suất");
+        } else {
+            setOpenUpdate(true);
+            setProduct(lineValue.finish);
+            // addMake(lineValue.id, 24)
         }
     }
 
+    const handleNhapTay = () => {
+        if(!isNaN(+Product)){
+            addMake(lineValue.id, Product - lineValue.finish)
+            setOpenUpdate(false);
+        }
+        else{
+            alert("Hãy Nhập Lại, Dữ Liệu Phải Là Số");
+        }
+    };
 
     const handleCancel = () => {
-        history.push("/day-chuyen");
+        setOpenUpdate(false);
     };
-    const handleRun = (event) => {
-        history.push("/day-chuyen");
-    };
+
+    // const handleCancel = () => {
+    //     history.push("/day-chuyen");
+    // };
+    // const handleRun = (event) => {
+    //     history.push("/day-chuyen");
+    // };
 
 
     return (
@@ -322,7 +356,7 @@ const AddMake = () => {
                                                 className={classes.button}
                                             >
                                                 <Typography className={classes.textBtn} component="h5" variant="h6" align="center">
-                                                    <strong>+ 1 kit/tray</strong>
+                                                    <strong>+ 5 PCS</strong>
                                                 </Typography>
 
                                             </Button>
@@ -337,9 +371,24 @@ const AddMake = () => {
                                                 size="large"
                                                 className={classes.button}
                                             >
-
                                                 <Typography className={classes.textBtn} component="h5" variant="h6" align="center">
-                                                    <strong>+ 1 box</strong>
+                                                    <strong>+ 15 PCS</strong>
+                                                </Typography>
+
+                                            </Button>
+                                        </div>
+                                    </Grid>
+                                    <Grid item xs={12} sm={12}>
+                                        <div className={classes.buttons}>
+                                            <Button
+                                                onClick={handleBtnNhapTay}
+                                                variant="contained"
+                                                color="primary"
+                                                size="large"
+                                                className={classes.button}
+                                            >
+                                                <Typography className={classes.textBtn} component="h5" variant="h6" align="center">
+                                                    <strong>Nhập Tay</strong>
                                                 </Typography>
 
                                             </Button>
@@ -349,6 +398,45 @@ const AddMake = () => {
                             </Grid>
                         </Grid>
                     </React.Fragment>
+
+                    <div>
+                        <Dialog
+                            open={openUpdate}
+                            TransitionComponent={Transition}
+                            keepMounted
+                            onClose={handleCancel}
+                            aria-labelledby="alert-dialog-slide-title"
+                            aria-describedby="alert-dialog-slide-description"
+                        >
+                            <DialogTitle id="alert-dialog-slide-title">{"Nhập Số Lượng Sản Phẩm"}</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="alert-dialog-slide-description">
+                                    {/* Nhập số lượng hiện tại: */}
+                                    <Grid item xs={12} sm={12}>
+                                        <TextField
+                                            required
+                                            fullWidth
+                                            id="san-pham"
+                                            label="Số Lượng Sản Phẩm Hiện Tại"
+                                            name="san-pham"
+                                            value={Product}
+                                            onChange={((e) => {
+                                                setProduct(e.target.value);
+                                            })}
+                                        />
+                                    </Grid>
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleCancel} color="primary" variant="contained">
+                                    No
+                                </Button>
+                                <Button onClick={handleNhapTay} color="secondary" variant="contained">
+                                    Yes
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+                    </div>
                 </Paper>
             </main>
         </React.Fragment>

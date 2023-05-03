@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('accounts.urls')),
     path('api/', include('app.urls')),
+    # path(r'^(?P<pk>[^/]+)', TemplateView.as_view(template_name="index.html")),
 ]

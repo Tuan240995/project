@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'flex-end',
     },
     button: {
-        width: '100px',
+        // width: '100px',
         marginTop: theme.spacing(3),
         marginLeft: theme.spacing(1),
     },
@@ -392,7 +392,7 @@ export default function MakeLine() {
                             <Grid item xs={12} sm={12}>
                                 {location.state.makeId !== "" ?
                                     <div>
-                                        <Grid container spacing={3}>
+                                        <Grid container spacing={2}>
 
                                             <Grid item xs={12} sm={6}>
                                                 <div >
@@ -402,7 +402,7 @@ export default function MakeLine() {
                                                         color="secondary"
                                                         className={classes.button}
                                                     >
-                                                        Stop
+                                                        Kết thúc
                                                     </Button>
                                                 </div>
                                             </Grid>
@@ -414,7 +414,7 @@ export default function MakeLine() {
                                                         color="primary"
                                                         className={classes.button}
                                                     >
-                                                        Update
+                                                        Cập nhập
                                                     </Button>
                                                 </div>
                                             </Grid>
@@ -422,7 +422,7 @@ export default function MakeLine() {
                                     </div>
                                     :
                                     <div>
-                                        <Grid container spacing={3}>
+                                        <Grid container spacing={2}>
 
                                             <Grid item xs={12} sm={6}>
                                                 <div >
@@ -432,7 +432,7 @@ export default function MakeLine() {
                                                         color="secondary"
                                                         className={classes.button}
                                                     >
-                                                        Cancel
+                                                        Quay lại
                                                     </Button>
                                                 </div>
                                             </Grid>
@@ -444,7 +444,7 @@ export default function MakeLine() {
                                                         color="primary"
                                                         className={classes.button}
                                                     >
-                                                        RUN
+                                                        Bắt đầu sản xuất
                                                     </Button>
                                                 </div>
                                             </Grid>

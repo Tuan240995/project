@@ -229,12 +229,6 @@ export default function MenuApp() {
                       <ListItemText primary="Hiển Thị Tivi" />
                     </ListItem>
                   </Link>
-                  <Link className={classes.link} to="/day-chuyen">
-                    <ListItem button>
-                      <ListItemIcon>{<InboxIcon />}</ListItemIcon>
-                      <ListItemText primary="Dây Chuyền" />
-                    </ListItem>
-                  </Link>
                   <Link className={classes.link} to="/san-xuat">
                     <ListItem button>
                       <ListItemIcon>{<InboxIcon />}</ListItemIcon>

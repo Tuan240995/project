@@ -18,9 +18,18 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 
 urlpatterns = [
+    #router
     path('', TemplateView.as_view(template_name="index.html")),
+    path('giam-sat', TemplateView.as_view(template_name="index.html")),
+    path('day-chuyen', TemplateView.as_view(template_name="index.html")),
+    path('lap-giap', TemplateView.as_view(template_name="index.html")),
+    path('san-xuat', TemplateView.as_view(template_name="index.html")),
+    path('quan-ly-chung', TemplateView.as_view(template_name="index.html")),
+    path('quet-qr', TemplateView.as_view(template_name="index.html")),
+    path('nhan-vien', TemplateView.as_view(template_name="index.html")),
+    
     path('admin/', admin.site.urls),
     path('account/', include('accounts.urls')),
     path('api/', include('app.urls')),
-    # path(r'^(?P<pk>[^/]+)', TemplateView.as_view(template_name="index.html")),
+    path(r'^(?P<pk>[^/]+)', TemplateView.as_view(template_name="index.html")),
 ]

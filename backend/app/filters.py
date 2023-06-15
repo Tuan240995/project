@@ -1,6 +1,6 @@
 import django_filters
 from django_filters import rest_framework as filters
-from app.models import Product, Line, Make
+from app.models import Product, Line, Make, Produce
 
 class ProductFilter(filters.FilterSet):
     class Meta:
@@ -41,3 +41,18 @@ class MakeFilter(filters.FilterSet):
 
     class Make:
         model = Make
+
+
+class ProduceFilter(filters.FilterSet):
+    shift = filters.CharFilter(
+        field_name='shift',
+        lookup_expr='icontains',
+    )
+
+    status = filters.CharFilter(
+        field_name='status',
+        lookup_expr='icontains',
+    )
+
+    class Make:
+        model = Produce

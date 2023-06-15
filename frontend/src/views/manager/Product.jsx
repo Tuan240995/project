@@ -158,7 +158,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ListUser = () => {
+const Product = () => {
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
     const [rows, setRows] = React.useState([]);
@@ -168,28 +168,31 @@ const ListUser = () => {
     const [openSearch, setOpenSearch] = React.useState(false);
     const [openInfor, setOpenInfor] = React.useState(false);
     const [openCheck, setOpenCheck] = React.useState(false);
-    const [openCheckPW, setOpenCheckPW] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [openUpdate, setOpenUpdate] = React.useState(false);
 
-    const [searchUserName, setSearchUserName] = React.useState("");
-    const [searchUserId, setSearchUserId] = React.useState("");
-    const [searchPosition, setSearchPosition] = React.useState("");
+    const [searchName, setSearchName] = React.useState("");
+    const [searchQr, setSearchQr] = React.useState("");
 
-    const [updateUserID, setUserID] = React.useState("");
+    const [updateProductID, setProducrID] = React.useState("");
     const [updateName, setUpdateName] = React.useState("");
     const [updateCode, setUpdateCode] = React.useState("");
-    const [updatePosition, setUpdatePosition] = React.useState("");
-    const [updatePassword, setUpdatePassword] = React.useState("");
-    const [updateRePassword, setUpdateRePassword] = React.useState("");
+    const [updateTager, setUpdateTager] = React.useState("");
+    const [updatePac, setUpdatePac] = React.useState("");
+    const [updateBox, setUpdateBox] = React.useState("");
+
 
 
     const [createName, setCreateName] = React.useState("");
     const [createCode, setCreateCode] = React.useState("");
+    const [createTager, setCreateTager] = React.useState("");
+    const [createPac, setCreatePac] = React.useState("");
+    const [createBox, setCreateBox] = React.useState("");
+
     const [createPosition, setCreatePosition] = React.useState("");
     const [createPassword, setCreatePassword] = React.useState("");
 
-    const [idUserDelete, setIdUserDelete] = React.useState("");
+    const [idProductDelete, setIdProductDelete] = React.useState("");
 
 
     // React.useEffect(() => { getData }, [])
@@ -202,7 +205,7 @@ const ListUser = () => {
     const getData = () => {
         axios({
             method: "GET",
-            url: "/account/nhan-vien/",
+            url: "/api/product/",
             headers: { "Content-Type": "application/json" },
         }).then((res) => {
             setRows(res.data);
@@ -274,11 +277,10 @@ const ListUser = () => {
     const hanldeBTNSearch = () => {
         axios({
             method: "GET",
-            url: "/account/nhan-vien/",
+            url: "/api/product/",
             params: {
-                last_name: searchUserName,
-                username: searchUserId,
-                first_name: searchPosition,
+                name: searchName,
+                key_QR: searchQr,
             },
             headers: { "Content-Type": "application/json" },
         }).then((res) => {
@@ -287,61 +289,73 @@ const ListUser = () => {
     }
 
     const hanldeBTNAdd = () => {
-        setOpenCheckPW(false);
         setOpenCheck(true);
         setOpenInfor(true);
 
+        setCreateName("");
+        setCreateCode("");
+        setCreateTager("");
+        setCreatePac("");
+        setCreateBox("");
     };
 
-    const hanldeBTNEdit = (user_id) => {
-        setOpenCheckPW(false);
+    const hanldeBTNEdit = (product_id) => {
         setOpenCheck(false);
         setOpenInfor(true);
         // getDataEdit(user_id);
-        const users = rows.filter((item) => item.id === user_id);
-        console.log(users)
-        setUserID(users[0].id);
-        setUpdateName(users[0].last_name);
-        setUpdateCode(users[0].username);
-        setUpdatePosition(users[0].first_name);
+        const product = rows.filter((item) => item.id === product_id);
+        setProducrID(product[0].id);
+        setUpdateName(product[0].name);
+        setUpdateCode(product[0].key_QR);
+        setUpdateTager(product[0].targer);
+        setUpdatePac(product[0].pac);
+        setUpdateBox(product[0].box);
     };
 
-    const hanldeBTNDelete = (user_id) => {
+    const hanldeBTNDelete = (product_id) => {
         setOpenUpdate(true);
-        setIdUserDelete(user_id);
+        setIdProductDelete(product_id);
 
     };
 
     const hanldeBTNCancel = () => {
-        setOpenCheckPW(false);
         setOpenInfor(false);
 
     };
 
     const hanldeBTNCreate = () => {
-        setOpenCheckPW(false);
-        setOpenInfor(false);
 
-        let data = new FormData()
-        data.append('name', createName)
-        data.append('code', createCode)
-        data.append('position', createPosition)
-        data.append('password', createPassword)
+        if (createName === "" || createCode === "" || createTager === "" || createPac === "" || createBox === "") {
+            alert(" Hãy Nhập Đủ Thông Tin");
+        }
+        else if (isNaN(createTager) || isNaN(createPac) || isNaN(createBox)) {
+            alert(" Mục Tiêu, Pac, Box Phải Là Số");
+        }
+        else {
+            setOpenInfor(false);
 
-        axios({
-            method: "POST",
-            url: "/account/nhan-vien/",
-            data: data,
-            headers: { "Content-Type": "application/json" },
-        }).then(res => {
-            if (res.data.success === "true") {
-                getData();
-                setStatusBase({ msg: "Tạo Tài Khoản Thành Công", key: Math.random() });
-            } else {
-                alert(res.data.message);
-            }
-        }).catch(error => alert("Tạo tài khoản bị lỗi"));
+            let data = new FormData()
+            data.append('name', createName)
+            data.append('key_QR', createCode)
+            data.append('targer', createTager)
+            data.append('pac', createPac)
+            data.append('box', createBox)
 
+            axios({
+                method: "POST",
+                url: "/api/product/",
+                data: data,
+                headers: { "Content-Type": "application/json" },
+            }).then(res => {
+                if (res.status === 201) {
+                    getData();
+                    setStatusBase({ msg: "Thêm Sản Phẩm Thành công", key: Math.random() });
+                }
+                else {
+                    alert(res.data.message);
+                }
+            }).catch(error => alert("Kiểm Tra Mã QR Bị Trùng"));
+        }
     };
     const hanldeReload = () => {
         getData();
@@ -352,50 +366,43 @@ const ListUser = () => {
     const updateUser = (data) => {
         axios({
             method: "PUT",
-            url: "/account/nhan-vien/" + updateUserID + "/",
+            url: "/account/nhan-vien/" + updateProductID + "/",
             headers: { "Content-Type": "application/json" },
             data: data
         }).then((res) => {
             setStatusBase({ msg: "Cập Nhập Thành Công", key: Math.random() });
-            // alert("Cập Nhập Thành Công")
-            setOpenCheckPW(false);
-            // setOpenInfor(false);
-            getData()
+            getData();
         }).catch(error => alert(error));
     }
 
     const hanldeBTNUpdate = () => {
-
-
-        if (updateName === "" || updateCode === "" || updatePosition === "") {
+        if (updateName === "" || updateCode === "" || updateTager === "" || updatePac === "" || updateBox === "") {
             alert(" Hãy Nhập Đủ Thông Tin");
+        }
+        else if (isNaN(updateTager) || isNaN(updatePac) || isNaN(updateBox)) {
+            alert(" Mục Tiêu, Pac, Box Phải Là Số");
         } else {
             let data = new FormData()
-            data.append('last_name', updateName)
-            data.append('username', updateCode)
-            data.append('first_name', updatePosition)
+            data.append('name', updateName)
+            data.append('key_QR', updateCode)
+            data.append('targer', updateTager)
+            data.append('pac', updatePac)
+            data.append('box', updateBox)
 
+            axios({
+                method: "PUT",
+                url: "/api/product/" + updateProductID + "/",
+                headers: { "Content-Type": "application/json" },
+                data: data
+            }).then((res) => {
+                setStatusBase({ msg: "Cập Nhập Thành Công", key: Math.random() });
+                getData();
 
-            if (openCheckPW) {
-                if (updatePassword !== "" && updatePassword === updateRePassword) {
-                    data.append('password', updatePassword);
-                    updateUser(data);
-                    setOpenInfor(false);
-                } else {
-                    alert(" Nhập Lại Mật Khẩu...");
-                }
-            } else {
-                updateUser(data);
-            }
+            }).catch(error => alert(error));
 
         }
 
     }
-
-    const hanldeBTNCheckPW = () => {
-        setOpenCheckPW(true);
-    };
-
 
     const handleCloseCheck = () => {
         setOpenUpdate(false);
@@ -405,14 +412,14 @@ const ListUser = () => {
         setOpenUpdate(false);
         axios({
             method: "DELETE",
-            url: "/account/nhan-vien/" + idUserDelete + "/",
+            url: "/api/product/" + idProductDelete + "/",
             headers: { "Content-Type": "application/json" },
         }).then((res) => {
-            setRows(rows.filter((item) => item.id !== idUserDelete));
+            setRows(rows.filter((item) => item.id !== idProductDelete));
         });
     };
 
-    const headCells = ["STT", "Tên", "Mã Nhân Viên", "Chức Vụ", ""];
+    const headCells = ["STT", "Tên", "Mã Qr", "Mục Tiêu", "Pac", "Box", ""];
 
     const list_data = (
         <div>
@@ -434,9 +441,11 @@ const ListUser = () => {
                             .map((row, index) => (
                                 <TableRow key={index} >
                                     <TableCell align="center" >{index}</TableCell>
-                                    <TableCell align="center" >{row.last_name}</TableCell>
-                                    <TableCell align="center">{row.username}</TableCell>
-                                    <TableCell align="center">{row.first_name}</TableCell>
+                                    <TableCell align="center" >{row.name}</TableCell>
+                                    <TableCell align="center">{row.key_QR}</TableCell>
+                                    <TableCell align="center">{row.targer}</TableCell>
+                                    <TableCell align="center">{row.pac}</TableCell>
+                                    <TableCell align="center">{row.box}</TableCell>
                                     <TableCell align="center">
                                         <IconButton
                                             color="primary"
@@ -469,11 +478,11 @@ const ListUser = () => {
         </div>
     );
 
-    const create_user = (
+    const create_product = (
         <main className={classes.layout}>
             <Paper className={classes.paper}>
                 <Typography className={classes.stepper} component="h1" variant="h5" align="center">
-                    <strong>Tạo Tài Khoản Nhân Viên</strong>
+                    <strong>Thêm Sản Phẩm Mới</strong>
                 </Typography>
                 <React.Fragment>
                     <Grid container spacing={2}>
@@ -483,7 +492,7 @@ const ListUser = () => {
                                 required
                                 fullWidth
                                 id="name"
-                                label="Họ và Tên"
+                                label="Tên Sản Phẩm"
                                 name="name"
                                 onChange={((e) => {
                                     setCreateName(e.target.value);
@@ -496,43 +505,51 @@ const ListUser = () => {
                                 required
                                 fullWidth
                                 id="code"
-                                label="Mã Nhân Viên"
+                                label="Mã Qr"
                                 name="code"
                                 onChange={((e) => {
                                     setCreateCode(e.target.value);
                                 })}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={12}>
-                            <FormControl variant="outlined" className={classes.formControl}>
-                                <InputLabel id="demo-simple-select-outlined-label">Chức Vụ</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-outlined-label"
-                                    id="demo-simple-select-outlined"
-                                    onChange={((e) => {
-                                        setCreatePosition(e.target.value);
-                                    })}
-                                    label="Chức Vụ"
-                                >
-                                    {selectPosition.map((option) => (
-                                        <MenuItem key={option.position} value={option.position}>
-                                            {option.position}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12} sm={12}>
 
+                        <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="password"
-                                label="Password"
-                                name="password"
+                                id="tager"
+                                label="Mục Tiêu"
+                                name="tager"
                                 onChange={((e) => {
-                                    setCreatePassword(e.target.value);
+                                    setCreateTager(e.target.value);
+                                })}
+                                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="pac"
+                                label="Pac"
+                                name="pac"
+                                onChange={((e) => {
+                                    setCreatePac(e.target.value);
+                                })}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="box"
+                                label="Box"
+                                name="box"
+                                onChange={((e) => {
+                                    setCreateBox(e.target.value);
                                 })}
                             />
                         </Grid>
@@ -569,11 +586,11 @@ const ListUser = () => {
         </main>
     );
 
-    const update_user = (
+    const update_product = (
         <main className={classes.layout}>
             <Paper className={classes.paper}>
                 <Typography className={classes.stepper} component="h1" variant="h5" align="center">
-                    <strong>Thông Tin Nhân Viên</strong>
+                    <strong>Thông Tin Sản Phẩm</strong>
                 </Typography>
                 <React.Fragment>
                     <Grid container spacing={2}>
@@ -583,7 +600,7 @@ const ListUser = () => {
                                 required
                                 fullWidth
                                 id="name"
-                                label="Họ và Tên"
+                                label="Tên Sản Phẩm"
                                 name="name"
                                 value={updateName}
                                 onChange={((e) => {
@@ -593,12 +610,11 @@ const ListUser = () => {
                         </Grid>
                         <Grid item xs={12} sm={12}>
                             <TextField
-
                                 variant="outlined"
                                 required
                                 fullWidth
                                 id="code"
-                                label="Mã Nhân Viên"
+                                label="Mã Qr"
                                 name="code"
                                 value={updateCode}
                                 onChange={((e) => {
@@ -606,74 +622,49 @@ const ListUser = () => {
                                 })}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={12}>
-                            <FormControl variant="outlined" className={classes.formControl}>
-                                <InputLabel id="demo-simple-select-outlined-label">Chức Vụ</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-outlined-label"
-                                    id="demo-simple-select-outlined"
-                                    value={updatePosition}
-                                    onChange={((e) => {
-                                        setUpdatePosition(e.target.value);
-                                    })}
-                                    label="Chức Vụ"
-                                >
-                                    {selectPosition.map((option) => (
-                                        <MenuItem key={option.position} value={option.position}>
-                                            {option.position}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="tager"
+                                label="Mục Tiêu"
+                                name="tager"
+                                value={updateTager}
+                                onChange={((e) => {
+                                    setUpdateTager(e.target.value);
+                                })}
+                            />
                         </Grid>
-                        {
-                            openCheckPW ?
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} sm={12}>
+                        <Grid item xs={12} sm={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="pac"
+                                label="Pac"
+                                name="pac"
+                                value={updatePac}
+                                onChange={((e) => {
+                                    setUpdatePac(e.target.value);
+                                })}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="box"
+                                label="Box"
+                                name="box"
+                                value={updateBox}
+                                onChange={((e) => {
+                                    setUpdateBox(e.target.value);
+                                })}
+                            />
+                        </Grid>
 
-                                        <Typography variant="h6">
-                                            Thay Đổi Mật Khẩu
-                                        </Typography>
-                                        <Divider style={{ color: "#000" }} />
-                                    </Grid>
-                                    <Grid item xs={12} sm={12}>
-                                        <TextField
-                                            variant="outlined"
-                                            required
-                                            fullWidth
-                                            id="password"
-                                            label="Password"
-                                            name="password"
-                                            onChange={((e) => {
-                                                setUpdatePassword(e.target.value);
-                                            })}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={12}>
-                                        <TextField
-                                            variant="outlined"
-                                            required
-                                            fullWidth
-                                            id="re-password"
-                                            label="Re-Password"
-                                            name="password"
-                                            onChange={((e) => {
-                                                setUpdateRePassword(e.target.value);
-                                            })}
-                                        />
-                                    </Grid>
-                                </Grid>
-                                :
-                                <Grid item xs={12} sm={12}>
-                                    <Button
-                                        onClick={hanldeBTNCheckPW}
-                                        variant="contained"
-                                        color="secondary"
-                                    >
-                                        Thay Đổi Mật Khẩu
-                                    </Button>
-                                </Grid>
-                        }
                         <Grid item xs={12} sm={12}>
                             <Divider style={{ color: "#000" }} />
                         </Grid>
@@ -707,12 +698,13 @@ const ListUser = () => {
         </main>
     );
 
+
     return (
         <React.Fragment>
             <main className={classes.layout}>
                 <Paper className={classes.paper}>
                     <Typography className={classes.stepper} component="h1" variant="h4" align="center">
-                        <strong>Quản Lý Nhân Viên</strong>
+                        <strong>Quản Lý Sản Phẩm</strong>
                     </Typography>
                     <Typography align="right" >
                         <IconButton>
@@ -742,54 +734,31 @@ const ListUser = () => {
                             <Grid container spacing={3}>
                                 <Grid item xs={6} sm={3}>
                                     <Typography>
-                                        <b>Tên</b>
+                                        <b>Tên Sản Phẩm</b>
                                     </Typography>
                                     <TextField
-                                        id="searchUserName"
-                                        name="searchUserName"
+                                        id="name"
+                                        name="name"
                                         onChange={((e) => {
-                                            setSearchUserName(e.target.value);
+                                            setSearchName(e.target.value);
                                         })}
-                                        autoComplete="searchUserName"
+                                        autoComplete="name"
                                     />
                                 </Grid>
                                 <Grid item xs={6} sm={3}>
                                     <Typography>
-                                        <b>Mã Nhân Viên</b>
+                                        <b>Mã Qr</b>
                                     </Typography>
                                     <TextField
-                                        id="searchUserId"
-                                        name="searchUserId"
+                                        id="searchqr"
+                                        name="searchqr"
                                         onChange={((e) => {
-                                            setSearchUserId(e.target.value);
+                                            setSearchQr(e.target.value);
                                         })}
-                                        autoComplete="searchUserId"
+                                        autoComplete="searchqr"
                                     />
                                 </Grid>
-                                <Grid item xs={6} sm={2}>
-                                    <Typography>
-                                        <b>Chức Vụ</b>
-                                    </Typography>
 
-                                    <FormControl className={classes.formControl}>
-                                        {/* <InputLabel id="demo-simple-select-label">Chức Vụ</InputLabel> */}
-                                        <Select
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            required
-                                            fullWidth
-                                            onChange={((e) => {
-                                                setSearchPosition(e.target.value);
-                                            })}
-                                        >
-                                            {selectPosition1.map((option) => (
-                                                <MenuItem key={option.position} value={option.value}>
-                                                    {option.position}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
                                 <Grid item xs={6} sm={2}>
                                     <Typography align="center">
                                         <Button
@@ -814,10 +783,10 @@ const ListUser = () => {
                                 <Grid item xs={12} sm={5}>
                                     {openCheck ?
                                         <Grid item xs={12} sm={12}>
-                                            {create_user}
+                                            {create_product}
                                         </Grid>
                                         :
-                                        <>{update_user}</>
+                                        <>{update_product}</>
                                     }
                                 </Grid>
                             </>
@@ -842,7 +811,7 @@ const ListUser = () => {
                         <DialogTitle id="alert-dialog-slide-title">{"Xóa Tài Khoản"}</DialogTitle>
                         <DialogContent>
                             <DialogContentText id="alert-dialog-slide-description">
-                                Bạn muốn xóa tài khoản này không ?
+                                Bạn muốn xóa sản phẩm này không ?
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
@@ -857,8 +826,8 @@ const ListUser = () => {
                 </div>
                 {status ? <AlertMassage key={status.key} message={status.msg} /> : null}
             </main>
-        </React.Fragment >
+        </React.Fragment>
     );
 }
 
-export default ListUser;
+export default Product;

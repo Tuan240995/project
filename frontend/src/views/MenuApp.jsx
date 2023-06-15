@@ -292,6 +292,12 @@ export default function MenuApp() {
                       <ListItemText primary="Nhân Viên" />
                     </ListItem>
                   </Link>
+                  <Link className={classes.link} to="/san-pham">
+                    <ListItem button>
+                      <ListItemIcon>{<InboxIcon />}</ListItemIcon>
+                      <ListItemText primary="Sản Phẩm" />
+                    </ListItem>
+                  </Link>
                 </List>
               }
 

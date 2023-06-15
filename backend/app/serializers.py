@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from accounts.serializers import UserSerializer
-from app.models import Product, Line,  Make
+from app.models import Product, Line, Make, Produce
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,12 +27,12 @@ class LineSerializer(serializers.ModelSerializer):
     def _get_make(self, instance):
         data = {}
         if instance.status:
-            make = Make.objects.get(line=instance, status="RUN")
+            make = Produce.objects.get(line=instance.name, status="RUN")
             data["makeId"] = make.id
-            data["product"] = make.product.name
+            data["product"] = make.product
             data["targer"] = make.targer
             data["finish"] = make.finish
-            data["pic"] = make.pic.username 
+            data["pic"] = make.pic 
             data['efficiency'] = (int(make.finish) / int(make.targer)) * 100
         else:
             data["makeId"] = ""
@@ -83,3 +83,46 @@ class MakeSerializer(serializers.ModelSerializer):
                 u = User.objects.get(username=user);
                 list_user.append(UserSerializer(u).data)
         return list_user
+    
+
+class ProduceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Produce
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['targer'] = int(instance.targer)
+        representation['finish'] = int(instance.finish)
+        representation['created_at'] = instance.created_at.strftime('%d-%m-%Y')
+        representation['time'] = instance.created_at.strftime('%H:%M:%S')
+        list_worker =  self._get_staff(instance)
+        representation["total_staff"] = len(list_worker)
+        representation["staff"] = list_worker
+        representation['efficiency'] = round((int(instance.finish) / int(instance.targer)) * 100, 1)
+        representation['missing'] = self._get_missing(instance)
+        product = self._get_product(instance.key_QR)
+        representation['pac'] = int(product.pac)
+        representation['box'] = int(product.box)
+        return representation
+
+    def _get_missing(self, instance):
+        if (int(instance.targer) > int(instance.finish)):
+            return (int(instance.targer) - int(instance.finish))
+        else :
+            return 0
+
+    def _get_staff(self, instance):
+        list_user = []
+        if instance.staff:
+            users =  (instance.staff).split(", ")
+            for user in users:
+                u = User.objects.get(username=user)
+                list_user.append(UserSerializer(u).data)
+        return list_user
+    
+    def _get_product(self, key):
+        product = Product.objects.get(key_QR=key)
+        return product
+

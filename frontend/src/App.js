@@ -14,6 +14,7 @@ import ListUser from "./views/user/ListUser";
 import ManagerLine from "./views/user/ManagerLine";
 import AddQr from "./views/make/AddQr";
 import Monitor from "./views/monitor/Monitor";
+import Product from "./views/manager/Product";
 
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
               <Route path="/nhan-vien" component={ListUser} />
               <Route path="/quan-ly-chung" component={ManagerLine} />
               <Route path="/quet-qr" component={AddQr} />
+              <Route path="/san-pham" component={Product} />
               <Route path="/" component={Shows} />
             </Switch>
           </>

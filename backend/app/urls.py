@@ -6,7 +6,8 @@ AppLine,
 AppMake, 
 CreateMake,
 StopMake,
-UpdateMake
+UpdateMake,
+AppProduce
 )
 
 urlpatterns = [
@@ -17,5 +18,6 @@ urlpatterns = [
 router = DefaultRouter()
 router.register(r'product', AppProduct, basename='san-pham')
 router.register(r'line', AppLine, basename='line')
-router.register(r'make', AppMake, basename='make')
+router.register(r'make', AppProduce, basename='make')
+router.register(r'produce', AppProduce, basename='make')
 urlpatterns += router.urls

@@ -79,8 +79,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const AddMake = () => {
     const classes = useStyles();
-    const history = useHistory();
-    const location = useLocation();
     const [line, setLine] = React.useState("");
     const [listLine, setListLine] = React.useState([]);
     const [openUpdate, setOpenUpdate] = React.useState(false);
@@ -93,8 +91,11 @@ const AddMake = () => {
         efficiency: "0",
         finish: "0",
         missing: "0",
+        pac: 0,
+        box: 0,
     });
     const [Product, setProduct] = React.useState(lineValue.finish);
+
 
     useEffect(() => {
         getLine();
@@ -108,6 +109,7 @@ const AddMake = () => {
             params: { status: 'true' }
         }).then((res) => {
             setListLine(res.data);
+
         });
     };
 
@@ -165,11 +167,11 @@ const AddMake = () => {
         }
     }
 
-    const handleBtnKit = () => {
+    const handleBtnPac = () => {
         if (lineValue.id === "") {
             alert("Hãy chọn dây chuyền sản suất");
         } else {
-            addMake(lineValue.id, 5)
+            addMake(lineValue.id, lineValue.pac)
         }
     }
 
@@ -177,7 +179,7 @@ const AddMake = () => {
         if (lineValue.id === "") {
             alert("Hãy chọn dây chuyền sản suất");
         } else {
-            addMake(lineValue.id, 10)
+            addMake(lineValue.id, lineValue.box)
         }
     }
     const handleBtnNhapTay = () => {
@@ -203,14 +205,6 @@ const AddMake = () => {
     const handleCancel = () => {
         setOpenUpdate(false);
     };
-
-    // const handleCancel = () => {
-    //     history.push("/day-chuyen");
-    // };
-    // const handleRun = (event) => {
-    //     history.push("/day-chuyen");
-    // };
-
 
     return (
         <React.Fragment>
@@ -349,14 +343,14 @@ const AddMake = () => {
                                     <Grid item xs={12} sm={12}>
                                         <div className={classes.buttons}>
                                             <Button
-                                                onClick={handleBtnKit}
+                                                onClick={handleBtnPac}
                                                 variant="contained"
                                                 color="primary"
                                                 size="large"
                                                 className={classes.button}
                                             >
                                                 <Typography className={classes.textBtn} component="h5" variant="h6" align="center">
-                                                    <strong>+ 5 PCS</strong>
+                                                    <strong>+ Pac</strong>
                                                 </Typography>
 
                                             </Button>
@@ -372,7 +366,7 @@ const AddMake = () => {
                                                 className={classes.button}
                                             >
                                                 <Typography className={classes.textBtn} component="h5" variant="h6" align="center">
-                                                    <strong>+ 15 PCS</strong>
+                                                    <strong>+ Box</strong>
                                                 </Typography>
 
                                             </Button>

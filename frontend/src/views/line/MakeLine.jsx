@@ -100,10 +100,11 @@ export default function MakeLine() {
             url: "/api/make/" + location.state.makeId + "/",
             headers: { "Content-Type": "application/json" },
         }).then((res) => {
-            setProduct(res.data.product)
-            setTarger(res.data.targer)
-            setShift(res.data.shift)
-            setWorker(res.data.staff)
+            console.log(res.data);
+            setProduct(res.data.key_QR);
+            setTarger(res.data.targer);
+            setShift(res.data.shift);
+            setWorker(res.data.staff);
         });
     };
 
@@ -187,7 +188,6 @@ export default function MakeLine() {
         let data = new FormData()
         data.append('make_id', location.state.makeId)
         data.append('product', product)
-        data.append('targer', targer)
         data.append('shift', shift)
         data.append('staff', hanld_user())
 
@@ -214,10 +214,9 @@ export default function MakeLine() {
     };
 
     const handleBtnRun = (event) => {
+        // console.log(product)
         if (product === "") {
             alert("Không tìm thấy sản phẩm")
-        } else if (targer === "") {
-            alert("Không tìm thấy mục tiêu sản xuất")
         } else if (shift === "") {
             alert("Không tìm thấy shift")
         } else if (worker === []) {
@@ -317,30 +316,22 @@ export default function MakeLine() {
                                         className={classes.selectEmpty}
                                         onChange={((e) => {
                                             setProduct(e.target.value);
+                                            listProduct.map((p) => {
+                                                if (p.key_QR === e.target.value) {
+                                                    setTarger(p.targer);
+                                                    return;
+                                                }
+                                            });
                                         })}
                                     >
                                         {listProduct.map((option) => (
-                                            <MenuItem key={option.name} value={option.name}>
-                                                {option.name}
+                                            <MenuItem key={option.name} value={option.key_QR}>
+                                                {option.name} 
                                             </MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
 
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    required
-                                    id="targer"
-                                    name="targer"
-                                    label="Mục Tiêu"
-                                    value={targer}
-                                    onChange={((e) => {
-                                        setTarger(e.target.value);
-                                    })}
-                                    fullWidth
-                                    autoComplete="shipping address-line2"
-                                />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <FormControl className={classes.formControl}>
@@ -363,7 +354,12 @@ export default function MakeLine() {
                                     </Select>
                                 </FormControl>
                             </Grid>
-
+                            <Grid item xs={12} sm={6}>
+                                <InputLabel>Mục Tiêu:</InputLabel>
+                                <Typography component="h5" variant="h5" align="center">
+                                    {targer}
+                                </Typography>
+                            </Grid>
                             <Grid item xs={12}>
                                 <Autocomplete
                                     multiple

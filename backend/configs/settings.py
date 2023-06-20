@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+STATIC_URL = 'static/'
 BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, 'templates'))
 STATICFILES_DIRS = [os.path.join(FRONTEND_DIR, 'build', 'static')]
@@ -139,7 +140,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),] # new
 # STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # new
 # STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage' # new

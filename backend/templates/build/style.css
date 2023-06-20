@@ -6,13 +6,3 @@ body {
 .display-screen {
   height: 100%;
 }
-
-.seller-page {
-  height: 100vh;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-around;
-
-  background-image: url("profile-background.jpg");
-}
